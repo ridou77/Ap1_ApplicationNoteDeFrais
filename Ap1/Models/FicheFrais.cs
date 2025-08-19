@@ -4,7 +4,7 @@
     {
         public int IdFicheFrais { get; set; }
         public int IdUser { get; set; }
-        public int IdComptable { get; set; }
+        public int? IdComptable { get; set; }
         public enum EtatFicheFrais
         {
             EN_COURS,
@@ -19,7 +19,7 @@
         public DateTime DateValidationFicheFrais { get; set; }
         public DateTime DateModificationFicheFrais { get; set; }
         public DateTime DateClotureFicheFrais { get; set; }
-        public string MotifRefusFicheFrais { get; set; }
+        public string? MotifRefusFicheFrais { get; set; }
 
 
     }

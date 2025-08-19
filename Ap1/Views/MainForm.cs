@@ -6,7 +6,7 @@ namespace GSB_demo.Views
     public partial class MainForm : Form
     {
         private FicheFraisController FicheFraisController;
-        private User connectedUser;
+        public User connectedUser { get; private set; }
         private List<FicheFrais> allFicheFrais;
 
         public MainForm(User user)
@@ -45,8 +45,16 @@ namespace GSB_demo.Views
 
             dgvFicheFrais.Columns.Add(new DataGridViewTextBoxColumn
             {
+                Name = "Nom",
+                HeaderText = "Nom Utilisateur",
+                DataPropertyName = "Nom",
+                Width = 50
+            });
+
+            dgvFicheFrais.Columns.Add(new DataGridViewTextBoxColumn
+            {
                 Name = "IdUser",
-                HeaderText = "ID Utilisateur",
+                HeaderText = "Nom Utilisateur",
                 DataPropertyName = "IdUser",
                 Width = 100
             });
@@ -158,6 +166,7 @@ namespace GSB_demo.Views
         private void btnAdd_Click(object sender, EventArgs e)
         {
             var ChoixFraisForm = new ChoixFraisForm();
+            ChoixFraisForm.Owner = this;
             ChoixFraisForm.ShowDialog();
         }
 

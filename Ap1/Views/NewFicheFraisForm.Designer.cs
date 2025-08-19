@@ -32,6 +32,7 @@
             comboBox1 = new ComboBox();
             label2 = new Label();
             numericUpDown1 = new NumericUpDown();
+            button1 = new Button();
             ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
             SuspendLayout();
             // 
@@ -68,11 +69,21 @@
             numericUpDown1.Size = new Size(91, 27);
             numericUpDown1.TabIndex = 4;
             // 
+            // button1
+            // 
+            button1.Location = new Point(335, 289);
+            button1.Name = "button1";
+            button1.Size = new Size(133, 49);
+            button1.TabIndex = 5;
+            button1.Text = "Ajouter à la fiche";
+            button1.UseVisualStyleBackColor = true;
+            // 
             // NewFicheFraisForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(516, 387);
+            Controls.Add(button1);
             Controls.Add(numericUpDown1);
             Controls.Add(label2);
             Controls.Add(comboBox1);
@@ -90,5 +101,6 @@
         private ComboBox comboBox1;
         private Label label2;
         private NumericUpDown numericUpDown1;
+        private Button button1;
     }
 }

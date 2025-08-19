@@ -88,7 +88,7 @@ namespace GSB_GestionnairePatients.Controllers
                                     {
                                         IdFicheFrais = reader.GetInt32("id_fiche_frais"),
                                         IdUser = reader.GetInt32("id_user"),
-                                        IdComptable = reader.IsDBNull("id_comptable") ? 0 : reader.GetInt32("id_comptable"),
+                                        IdComptable = reader.IsDBNull("id_comptable") ? null : reader.GetInt32("id_comptable"),
                                         Etat = etat,
                                         DateCreationFicheFrais = reader.GetDateTime("date_creation_fiche_frais"),
                                         DateValidationFicheFrais = reader.IsDBNull("date_validation_fiche_frais") ? DateTime.MinValue : reader.GetDateTime("date_validation_fiche_frais"),
@@ -113,6 +113,47 @@ namespace GSB_GestionnairePatients.Controllers
                     "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             return null;
+        }
+
+        public bool AddFicheFrais(FicheFrais fiche)
+        {
+            try
+            {
+                using (var connection = DatabaseConnection.GetConnection())
+                {
+                    connection.Open();
+                    string query = @"INSERT INTO fiche_frais
+                (id_user, id_comptable, etat_fiche_frais, 
+                date_creation_fiche_frais, date_validation_fiche_frais, 
+                date_modification_fiche_frais, date_cloture_fiche_frais, 
+                motif_refus_fiche_frais)
+                VALUES 
+                (@id_user, @id_comptable, @etat_fiche_frais, 
+                @date_creation, @date_validation, 
+                @date_modification, @date_cloture, 
+                @motif_refus)";
+
+                    using (var cmd = new MySqlCommand(query, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@id_user", fiche.IdUser);
+                        cmd.Parameters.AddWithValue("@id_comptable", fiche.IdComptable);
+                        cmd.Parameters.AddWithValue("@etat_fiche_frais", fiche.Etat.ToString());
+                        cmd.Parameters.AddWithValue("@date_creation", fiche.DateCreationFicheFrais);
+                        cmd.Parameters.AddWithValue("@date_validation", fiche.DateValidationFicheFrais);
+                        cmd.Parameters.AddWithValue("@date_modification", fiche.DateModificationFicheFrais);
+                        cmd.Parameters.AddWithValue("@date_cloture", fiche.DateClotureFicheFrais);
+                        cmd.Parameters.AddWithValue("@motif_refus", fiche.MotifRefusFicheFrais);
+
+                        return cmd.ExecuteNonQuery() > 0;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erreur lors de l'ajout de la fiche de frais : {ex.Message}",
+                    "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
         }
     }
 }
