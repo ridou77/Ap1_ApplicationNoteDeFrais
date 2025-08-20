@@ -16,9 +16,12 @@ namespace GSB_GestionnairePatients.Controllers
                 using (var connection = DatabaseConnection.GetConnection())
                 {
                     connection.Open();
-                    string query = @"SELECT id_fiche_frais, id_user, id_comptable, etat_fiche_frais, date_creation_fiche_frais, date_validation_fiche_frais, date_modification_fiche_frais,
-                                          date_cloture_fiche_frais, motif_refus_fiche_frais
-                                   FROM fiche_frais";
+                    string query = @"SELECT ff.id_fiche_frais, ff.id_user, ff.id_comptable, ff.etat_fiche_frais, 
+                               ff.date_creation_fiche_frais, ff.date_validation_fiche_frais, 
+                               ff.date_modification_fiche_frais, ff.date_cloture_fiche_frais, 
+                               ff.motif_refus_fiche_frais, u.nom, u.prenom
+                            FROM fiche_frais ff
+                            JOIN users u ON ff.id_user = u.id_user";
 
                     using (var cmd = new MySqlCommand(query, connection))
                     using (var reader = cmd.ExecuteReader())
@@ -34,6 +37,7 @@ namespace GSB_GestionnairePatients.Controllers
                                 {
                                     IdFicheFrais = reader.GetInt32("id_fiche_frais"),
                                     IdUser = reader.GetInt32("id_user"),
+                                    NomUtilisateur = $"{reader.GetString("prenom")} {reader.GetString("nom")}",
                                     IdComptable = reader.IsDBNull("id_comptable") ? 0 : reader.GetInt32("id_comptable"),
                                     Etat = etat,
                                     DateCreationFicheFrais = reader.GetDateTime("date_creation_fiche_frais"),

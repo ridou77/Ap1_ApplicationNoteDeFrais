@@ -45,17 +45,19 @@ namespace GSB_demo.Views
 
             dgvFicheFrais.Columns.Add(new DataGridViewTextBoxColumn
             {
-                Name = "Nom",
-                HeaderText = "Nom Utilisateur",
-                DataPropertyName = "Nom",
-                Width = 50
+                Name = "IdUser",
+                HeaderText = "ID Utilisateur",
+                DataPropertyName = "IdUser",
+                Width = 100
             });
 
+            // Afficher le nom de l'utilisateur dans la DAtaGridView
             dgvFicheFrais.Columns.Add(new DataGridViewTextBoxColumn
             {
-                Name = "IdUser",
+                // ne s'affiche pas car il n'y a pas de propriété nom dans la classe FicheFrais
+                Name = "NomUtilisateur",
                 HeaderText = "Nom Utilisateur",
-                DataPropertyName = "IdUser",
+                DataPropertyName = "NomUtilisateur",
                 Width = 100
             });
 

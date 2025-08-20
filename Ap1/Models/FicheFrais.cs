@@ -4,6 +4,7 @@
     {
         public int IdFicheFrais { get; set; }
         public int IdUser { get; set; }
+        public string? NomUtilisateur { get; set; }
         public int? IdComptable { get; set; }
         public enum EtatFicheFrais
         {
