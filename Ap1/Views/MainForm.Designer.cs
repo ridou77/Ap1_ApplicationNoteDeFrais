@@ -142,6 +142,7 @@
             dgvFicheFrais.RowHeadersWidth = 51;
             dgvFicheFrais.Size = new Size(814, 200);
             dgvFicheFrais.TabIndex = 9;
+            dgvFicheFrais.CellContentClick += dgvFicheFrais_CellContentClick;
             dgvFicheFrais.DoubleClick += dgvFicheFrais_DoubleClick;
             dgvFicheFrais.KeyDown += txtSearch_KeyDown;
             // 

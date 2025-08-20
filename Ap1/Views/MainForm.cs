@@ -35,21 +35,31 @@ namespace GSB_demo.Views
             dgvFicheFrais.ReadOnly = true;
 
             // Colonnes du DataGridView
-            dgvFicheFrais.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = "IdFicheFrais",
-                HeaderText = "ID",
-                DataPropertyName = "IdFicheFrais",
-                Width = 50
-            });
+            //dgvFicheFrais.Columns.Add(new DataGridViewTextBoxColumn
+            //{
+            //    Name = "IdFicheFrais",
+            //    HeaderText = "ID",
+            //    DataPropertyName = "IdFicheFrais",
+            //    Width = 50
+            //});
 
-            dgvFicheFrais.Columns.Add(new DataGridViewTextBoxColumn
+            //dgvFicheFrais.Columns.Add(new DataGridViewTextBoxColumn
+            //{
+            //    Name = "IdUser",
+            //    HeaderText = "ID Utilisateur",
+            //    DataPropertyName = "IdUser",
+            //    Width = 100
+            //});
+
+            var btnCol = new DataGridViewButtonColumn
             {
-                Name = "IdUser",
-                HeaderText = "ID Utilisateur",
-                DataPropertyName = "IdUser",
+                Name = "VoirFiche",
+                HeaderText = "Voir la fiche de frais",
+                Text = "Voir",
+                UseColumnTextForButtonValue = true, // Affiche "Voir" dans toutes les cellules
                 Width = 100
-            });
+            };
+            dgvFicheFrais.Columns.Add(btnCol);
 
             // Afficher le nom de l'utilisateur dans la DAtaGridView
             dgvFicheFrais.Columns.Add(new DataGridViewTextBoxColumn
@@ -167,9 +177,43 @@ namespace GSB_demo.Views
 
         private void btnAdd_Click(object sender, EventArgs e)
         {
-            var ChoixFraisForm = new ChoixFraisForm();
-            ChoixFraisForm.Owner = this;
-            ChoixFraisForm.ShowDialog();
+            try
+            {
+                // Récupérer l'utilisateur connecté depuis le MainForm
+                User connectedUser = this.connectedUser;
+
+                // Créer l'objet FicheFrais
+                var nouvelleFiche = new FicheFrais
+                {
+                    IdUser = connectedUser.IdUser,
+                    IdComptable = null,
+                    Etat = FicheFrais.EtatFicheFrais.EN_COURS,
+                    DateCreationFicheFrais = DateTime.Now,
+                    DateValidationFicheFrais = DateTime.MinValue,
+                    DateModificationFicheFrais = DateTime.MinValue,
+                    DateClotureFicheFrais = DateTime.MinValue,
+                    MotifRefusFicheFrais = ""
+                };
+
+                var controller = new FicheFraisController();
+
+                if (controller.AddFicheFrais(nouvelleFiche))
+                {
+                    var NewFicheFraisForm = new NewLigneFraisForm();
+                    LoadFicheFrais();
+                    txtSearch.Clear();
+                }
+                else
+                {
+                    MessageBox.Show("Échec lors de la création de la fiche de frais",
+                        "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Une erreur est survenue : {ex.Message}",
+                    "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void btnEdit_Click(object sender, EventArgs e)
@@ -221,7 +265,22 @@ namespace GSB_demo.Views
             if (dgvFicheFrais.SelectedRows.Count > 0)
             {
                 var patient = (FicheFrais)dgvFicheFrais.SelectedRows[0].DataBoundItem;
-               
+
+            }
+        }
+
+        private void dgvFicheFrais_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            // Vérifie si la colonne cliquée est "VoirFiche"
+            if (dgvFicheFrais.Columns[e.ColumnIndex].Name == "VoirFiche")
+            {
+                // Récupère la fiche de frais de la ligne cliquée
+                var fiche = (FicheFrais)dgvFicheFrais.Rows[e.RowIndex].DataBoundItem;
+
+                // Ouvre le formulaire ou effectue l'action souhaitée
+                var fraisForfaitForm = new FraisForfaitForm();
+                fraisForfaitForm.Owner = this; // dès quon met un bouton pour ouvrir un nouveau form, mettre l'owner, pour ne pas avoir l'erreur : "Object reference not set to an instance of an object"
+                fraisForfaitForm.ShowDialog();
             }
         }
     }

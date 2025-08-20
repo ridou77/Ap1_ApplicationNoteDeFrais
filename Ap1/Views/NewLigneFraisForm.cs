@@ -10,9 +10,9 @@ using System.Windows.Forms;
 
 namespace GSB_demo.Views
 {
-    public partial class NewFicheFraisForm : Form
+    public partial class NewLigneFraisForm : Form
     {
-        public NewFicheFraisForm()
+        public NewLigneFraisForm()
         {
             InitializeComponent();
         }

@@ -1,6 +1,6 @@
 ﻿namespace GSB_demo.Views
 {
-    partial class NewFicheFraisForm
+    partial class NewLigneFraisForm
     {
         /// <summary>
         /// Required designer variable.
@@ -71,7 +71,7 @@
             // 
             // button1
             // 
-            button1.Location = new Point(335, 289);
+            button1.Location = new Point(335, 297);
             button1.Name = "button1";
             button1.Size = new Size(133, 49);
             button1.TabIndex = 5;
