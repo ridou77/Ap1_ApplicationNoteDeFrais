@@ -103,8 +103,11 @@ namespace GSB_demo.Views
                     // Tous les droits
                     // Ajout d'utilisateur, modification, suppression
                     // Gestion des types de frais : Ajout d'un type de frais, modification, suppression
+                    btnAdd.Visible = true;
                     btnAdd.Enabled = true;
+                    btnEdit.Visible = true;
                     btnEdit.Enabled = true;
+                    btnDelete.Visible = true;
                     btnDelete.Enabled = true;
                     break;
                 case User.RoleUser.COMPTABLE: // Comptable
@@ -113,8 +116,11 @@ namespace GSB_demo.Views
                     // Validation complete / refus complet
                     // Refus sur un seul ou plusieurs frais
                     // Refus avec motif écrit
+                    btnAdd.Visible = false;
                     btnAdd.Enabled = false;
+                    btnEdit.Visible = true;
                     btnEdit.Enabled = true;
+                    btnDelete.Visible = false;
                     btnDelete.Enabled = false;
                     break;
                 case User.RoleUser.VISITEUR: // Visiteur
@@ -122,14 +128,20 @@ namespace GSB_demo.Views
                     // Ajouter un  novueau frais : forfait / hors forfait
                     // Consulter les fiches de frais
                     // Lier des justificatifs à la fiche de frais
+                    btnAdd.Visible = true;
                     btnAdd.Enabled = true;
+                    btnEdit.Visible = true;
                     btnEdit.Enabled = true;
+                    btnDelete.Visible = false;
                     btnDelete.Enabled = false;
                     break;
                 default:
                     // Aucun droit
+                    btnAdd.Visible = false;
                     btnAdd.Enabled = false;
+                    btnEdit.Visible = false;
                     btnEdit.Enabled = false;
+                    btnDelete.Visible = false;
                     btnDelete.Enabled = false;
                     break;
             }
@@ -207,7 +219,8 @@ namespace GSB_demo.Views
 
                 if (controller.AddFicheFrais(nouvelleFiche))
                 {
-                    var NewFicheFraisForm = new NewLigneFraisForm();
+                    // Passer l'ID de la fiche de frais nouvellement créée au formulaire
+                    var NewFicheFraisForm = new NewLigneFraisForm(nouvelleFiche.IdFicheFrais); // Correction: Passer l'ID requis
                     LoadFicheFrais();
                     txtSearch.Clear();
                 }
@@ -286,7 +299,7 @@ namespace GSB_demo.Views
                 var fiche = (FicheFrais)dgvFicheFrais.Rows[e.RowIndex].DataBoundItem;
 
                 // Ouvre le formulaire ou effectue l'action souhaitée
-                var fraisForfaitForm = new FraisForfaitForm();
+                var fraisForfaitForm = new FraisForfaitForm(fiche);
                 fraisForfaitForm.Owner = this; // dès quon met un bouton pour ouvrir un nouveau form, mettre l'owner, pour ne pas avoir l'erreur : "Object reference not set to an instance of an object"
                 fraisForfaitForm.ShowDialog();
             }

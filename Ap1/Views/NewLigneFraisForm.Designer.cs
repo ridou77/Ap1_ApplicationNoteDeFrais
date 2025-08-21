@@ -29,11 +29,11 @@
         private void InitializeComponent()
         {
             label1 = new Label();
-            comboBox1 = new ComboBox();
+            listeFraisDefini = new ComboBox();
             label2 = new Label();
-            numericUpDown1 = new NumericUpDown();
-            button1 = new Button();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
+            choixNombreFrais = new NumericUpDown();
+            btnAddLigneFrais = new Button();
+            ((System.ComponentModel.ISupportInitialize)choixNombreFrais).BeginInit();
             SuspendLayout();
             // 
             // label1
@@ -45,13 +45,13 @@
             label1.TabIndex = 0;
             label1.Text = "Ajout de frais forfait ";
             // 
-            // comboBox1
+            // listeFraisDefini
             // 
-            comboBox1.FormattingEnabled = true;
-            comboBox1.Location = new Point(157, 104);
-            comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(151, 28);
-            comboBox1.TabIndex = 1;
+            listeFraisDefini.FormattingEnabled = true;
+            listeFraisDefini.Location = new Point(157, 104);
+            listeFraisDefini.Name = "listeFraisDefini";
+            listeFraisDefini.Size = new Size(151, 28);
+            listeFraisDefini.TabIndex = 1;
             // 
             // label2
             // 
@@ -62,35 +62,37 @@
             label2.TabIndex = 3;
             label2.Text = "Ajouter un frais :";
             // 
-            // numericUpDown1
+            // choixNombreFrais
             // 
-            numericUpDown1.Location = new Point(335, 106);
-            numericUpDown1.Name = "numericUpDown1";
-            numericUpDown1.Size = new Size(91, 27);
-            numericUpDown1.TabIndex = 4;
+            choixNombreFrais.Location = new Point(335, 106);
+            choixNombreFrais.Name = "choixNombreFrais";
+            choixNombreFrais.Size = new Size(91, 27);
+            choixNombreFrais.TabIndex = 4;
+            choixNombreFrais.ValueChanged += choixNombreFrais_ValueChanged;
             // 
-            // button1
+            // btnAddLigneFrais
             // 
-            button1.Location = new Point(335, 297);
-            button1.Name = "button1";
-            button1.Size = new Size(133, 49);
-            button1.TabIndex = 5;
-            button1.Text = "Ajouter à la fiche";
-            button1.UseVisualStyleBackColor = true;
+            btnAddLigneFrais.Location = new Point(335, 297);
+            btnAddLigneFrais.Name = "btnAddLigneFrais";
+            btnAddLigneFrais.Size = new Size(133, 49);
+            btnAddLigneFrais.TabIndex = 5;
+            btnAddLigneFrais.Text = "Ajouter à la fiche";
+            btnAddLigneFrais.UseVisualStyleBackColor = true;
+            btnAddLigneFrais.Click += btnAddLigneFrais_Click;
             // 
-            // NewFicheFraisForm
+            // NewLigneFraisForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(516, 387);
-            Controls.Add(button1);
-            Controls.Add(numericUpDown1);
+            Controls.Add(btnAddLigneFrais);
+            Controls.Add(choixNombreFrais);
             Controls.Add(label2);
-            Controls.Add(comboBox1);
+            Controls.Add(listeFraisDefini);
             Controls.Add(label1);
-            Name = "NewFicheFraisForm";
+            Name = "NewLigneFraisForm";
             Text = "NewFicheFrais";
-            ((System.ComponentModel.ISupportInitialize)numericUpDown1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)choixNombreFrais).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -98,9 +100,9 @@
         #endregion
 
         private Label label1;
-        private ComboBox comboBox1;
+        private ComboBox listeFraisDefini;
         private Label label2;
-        private NumericUpDown numericUpDown1;
-        private Button button1;
+        private NumericUpDown choixNombreFrais;
+        private Button btnAddLigneFrais;
     }
 }

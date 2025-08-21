@@ -47,6 +47,7 @@
             label1.Size = new Size(96, 20);
             label1.TabIndex = 0;
             label1.Text = "Fiche de frais";
+            label1.Click += label1_Click;
             // 
             // dataGridView1
             // 
@@ -56,6 +57,7 @@
             dataGridView1.RowHeadersWidth = 51;
             dataGridView1.Size = new Size(300, 391);
             dataGridView1.TabIndex = 1;
+            dataGridView1.CellContentClick += dataGridView1_CellContentClick;
             // 
             // button1
             // 
