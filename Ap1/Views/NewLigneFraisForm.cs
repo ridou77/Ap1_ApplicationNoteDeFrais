@@ -20,8 +20,8 @@ namespace GSB_demo.Views
             var typesFrais = controller.GetAllTypeFrais();
 
             listeFraisDefini.DataSource = typesFrais;
-            listeFraisDefini.DisplayMember = "LibelleTypeFrais"; // Ce qui s'affiche
-            listeFraisDefini.ValueMember = "IdTypeFrais";        // La valeur associée
+            listeFraisDefini.DisplayMember = "LibelleTypeFrais";
+            listeFraisDefini.ValueMember = "IdTypeFrais";
         }
 
         private void btnAddLigneFrais_Click(object sender, EventArgs e)
@@ -34,10 +34,11 @@ namespace GSB_demo.Views
                 var controller = new LigneFraisController();
                 bool success = controller.AddLigneFrais(idFicheFrais, idTypeFrais, quantite);
 
+
                 if (success)
                 {
                     MessageBox.Show("Ligne de frais ajoutée avec succès !", "Succès", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
+                    this.Close(); // Ferme le formulaire d'ajout
                 }
                 else
                 {

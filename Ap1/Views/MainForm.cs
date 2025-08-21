@@ -147,14 +147,13 @@ namespace GSB_demo.Views
             }
         }
 
-        private void LoadFicheFrais()
+        public void LoadFicheFrais()
         {
             try
             {
                 allFicheFrais = FicheFraisController.GetAllFicheFrais();
                 dgvFicheFrais.DataSource = allFicheFrais;
 
-                // Mise à jour du titre avec le nombre de patients
                 this.Text = $"GSB - Gestionnaire de Patients ({allFicheFrais.Count} patients)";
             }
             catch (Exception ex)
@@ -220,7 +219,7 @@ namespace GSB_demo.Views
                 if (controller.AddFicheFrais(nouvelleFiche))
                 {
                     // Passer l'ID de la fiche de frais nouvellement créée au formulaire
-                    var NewFicheFraisForm = new NewLigneFraisForm(nouvelleFiche.IdFicheFrais); // Correction: Passer l'ID requis
+                    var NewFicheFraisForm = new NewLigneFraisForm(nouvelleFiche.IdFicheFrais);
                     LoadFicheFrais();
                     txtSearch.Clear();
                 }
