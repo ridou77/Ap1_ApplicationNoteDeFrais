@@ -31,7 +31,7 @@ namespace GSB_demo.Controllers
                                 return new User
                                 {
                                     IdUser = reader.GetInt32("id_user"),
-                                    Role = reader.GetInt32("id_role"),
+                                    Role = (User.RoleUser)reader.GetInt32("id_role"),
                                     Nom = reader.GetString("nom"),
                                     Prenom = reader.GetString("prenom"),
                                     Email = reader.IsDBNull("email") ? "" : reader.GetString("email"),

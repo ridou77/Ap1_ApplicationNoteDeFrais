@@ -97,23 +97,31 @@ namespace GSB_demo.Views
         // Visiteurs : Créer une fiche, ajouter une ligne de frais, ajouter justificatif à la fiche de frais
         private void ConfigurePermissions()
         {
-            // 1 = Administrateur, 2 = Comptable, 3 = Visiteur
             switch (connectedUser.Role)
             {
-                case 1: // Administrateur
-                        // Tous les droits
+                case User.RoleUser.ADMIN: // Administrateur
+                    // Tous les droits
+                    // Ajout d'utilisateur, modification, suppression
+                    // Gestion des types de frais : Ajout d'un type de frais, modification, suppression
                     btnAdd.Enabled = true;
                     btnEdit.Enabled = true;
                     btnDelete.Enabled = true;
                     break;
-                case 2: // Comptable
-                        // Droit de recherche et validation/refus, pas de suppression
+                case User.RoleUser.COMPTABLE: // Comptable
+                    // Recherche de fiche de frais par utilisateur
+                    // Modification de l'état de la fiche de frais : 
+                    // Validation complete / refus complet
+                    // Refus sur un seul ou plusieurs frais
+                    // Refus avec motif écrit
                     btnAdd.Enabled = false;
                     btnEdit.Enabled = true;
                     btnDelete.Enabled = false;
                     break;
-                case 3: // Visiteur
-                        // Créer une fiche, ajouter une ligne, ajouter justificatif
+                case User.RoleUser.VISITEUR: // Visiteur
+                    // Créer une nouvelle fiche de frais
+                    // Ajouter un  novueau frais : forfait / hors forfait
+                    // Consulter les fiches de frais
+                    // Lier des justificatifs à la fiche de frais
                     btnAdd.Enabled = true;
                     btnEdit.Enabled = true;
                     btnDelete.Enabled = false;
