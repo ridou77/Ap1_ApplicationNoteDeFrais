@@ -51,7 +51,6 @@
             label1.Size = new Size(96, 20);
             label1.TabIndex = 0;
             label1.Text = "Fiche de frais";
-            label1.Click += label1_Click;
             // 
             // LigneFraisForfaitDG
             // 
@@ -61,7 +60,6 @@
             LigneFraisForfaitDG.RowHeadersWidth = 51;
             LigneFraisForfaitDG.Size = new Size(418, 391);
             LigneFraisForfaitDG.TabIndex = 1;
-            LigneFraisForfaitDG.CellContentClick += LigneFraisForfaitDG_CellContentClick;
             // 
             // button1
             // 
@@ -126,6 +124,7 @@
             TotalPriceFraisForfait.Size = new Size(75, 20);
             TotalPriceFraisForfait.TabIndex = 8;
             TotalPriceFraisForfait.Text = "Prix total :";
+            TotalPriceFraisForfait.Click += TotalPriceFraisForfait_Click;
             // 
             // TotalPriceFraisHorsForfait
             // 

@@ -159,5 +159,28 @@ namespace GSB_GestionnairePatients.Controllers
                 return false;
             }
         }
+
+        public bool DeleteFicheFrais(int idFicheFrais)
+        {
+            try
+            {
+                using (var connection = DatabaseConnection.GetConnection())
+                {
+                    connection.Open();
+                    string query = @"DELETE FROM fiche_frais WHERE id_fiche_frais = @id_fiche_frais";
+                    using (var cmd = new MySqlCommand(query, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@id_fiche_frais", idFicheFrais);
+                        return cmd.ExecuteNonQuery() > 0;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erreur lors de la suppression de la fiche de frais : {ex.Message}",
+                    "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+        }
     }
 }

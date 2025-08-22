@@ -1,4 +1,5 @@
-﻿using GSB_demo.Models;
+﻿using System.Windows.Forms;
+using GSB_demo.Models;
 using GSB_GestionnairePatients.Controllers;
 
 namespace GSB_demo.Views
@@ -32,7 +33,7 @@ namespace GSB_demo.Views
             dgvFicheFrais.MultiSelect = false;
             dgvFicheFrais.AllowUserToAddRows = false;
             dgvFicheFrais.AllowUserToDeleteRows = false;
-            dgvFicheFrais.ReadOnly = true;
+            dgvFicheFrais.ReadOnly = false;
 
             // Colonnes du DataGridView
             //dgvFicheFrais.Columns.Add(new DataGridViewTextBoxColumn
@@ -51,7 +52,7 @@ namespace GSB_demo.Views
             //    Width = 100
             //});
 
-            var btnCol = new DataGridViewButtonColumn
+            var btnVoirFicheFrais = new DataGridViewButtonColumn
             {
                 Name = "VoirFiche",
                 HeaderText = "Voir la fiche de frais",
@@ -59,34 +60,46 @@ namespace GSB_demo.Views
                 UseColumnTextForButtonValue = true, // Affiche "Voir" dans toutes les cellules
                 Width = 100
             };
-            dgvFicheFrais.Columns.Add(btnCol);
+            dgvFicheFrais.Columns.Insert(0, btnVoirFicheFrais);
 
             // Afficher le nom de l'utilisateur dans la DAtaGridView
-            dgvFicheFrais.Columns.Add(new DataGridViewTextBoxColumn
+            var NomUtilisateurColumn = new DataGridViewTextBoxColumn
             {
                 // ne s'affiche pas car il n'y a pas de propriété nom dans la classe FicheFrais
                 Name = "NomUtilisateur",
                 HeaderText = "Nom Utilisateur",
                 DataPropertyName = "NomUtilisateur",
                 Width = 100
-            });
+            };
+            dgvFicheFrais.Columns.Insert(1, NomUtilisateurColumn);
 
-            dgvFicheFrais.Columns.Add(new DataGridViewTextBoxColumn
+            var EtatFicheFrais = new DataGridViewTextBoxColumn
             {
                 Name = "Etat",
                 HeaderText = "État",
                 DataPropertyName = "Etat",
                 Width = 120
-            });
+            };
+            dgvFicheFrais.Columns.Insert(2, EtatFicheFrais);
 
-            dgvFicheFrais.Columns.Add(new DataGridViewTextBoxColumn
+            var DateCreationFicheFrais = new DataGridViewTextBoxColumn
             {
                 Name = "DateCreationFicheFrais",
                 HeaderText = "Date de création",
                 DataPropertyName = "DateCreationFicheFrais",
                 Width = 140,
                 DefaultCellStyle = { Format = "dd/MM/yyyy" }
-            });
+            };
+            dgvFicheFrais.Columns.Insert(3, DateCreationFicheFrais);
+
+            var checkBoxDeleteFicheFrais = new DataGridViewCheckBoxColumn
+            {
+                Name = "Selectionner",
+                HeaderText = "Sélectionner",
+                ReadOnly = false,
+                Width = 40
+            };
+            dgvFicheFrais.Columns.Insert(4, checkBoxDeleteFicheFrais);
 
             // Gestion des permissions selon le rôle
             ConfigurePermissions();
@@ -251,15 +264,53 @@ namespace GSB_demo.Views
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
-            if (dgvFicheFrais.SelectedRows.Count == 0)
+
+            // Liste pour stocker les fiches à supprimer
+            List<FicheFrais> fichesASupprimer = new List<FicheFrais>();
+            
+            // Parcourir toutes les lignes de la DataGridView
+            for (int i = 0; i < dgvFicheFrais.Rows.Count; i++)
             {
-                MessageBox.Show("Veuillez sélectionner un patient à supprimer.",
+                // Vérifier si la case à cocher est cochée (colonne "Selectionner")
+                if (dgvFicheFrais.Rows[i].Cells["Selectionner"].Value != null && 
+                    (bool)dgvFicheFrais.Rows[i].Cells["Selectionner"].Value == true)
+                {
+                    // Ajouter la fiche de frais à la liste des fiches à supprimer
+                    var fiche = (FicheFrais)dgvFicheFrais.Rows[i].DataBoundItem;
+                    fichesASupprimer.Add(fiche);
+                }
+            }
+            
+            // Vérifier s'il y a des fiches à supprimer
+            if (fichesASupprimer.Count == 0)
+            {
+                MessageBox.Show("Veuillez cocher au moins une fiche à supprimer.",
                     "Aucune sélection", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-
-            MessageBox.Show("Fonctionnalité de suppression en cours de développement",
-                "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            
+            if (MessageBox.Show($"Êtes-vous sûr de vouloir supprimer {fichesASupprimer.Count} fiche(s) de frais ?",
+                "Confirmation de suppression", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            {
+                int nbSupprimees = 0;
+                
+                // Parcourir la liste des fiches à supprimer
+                foreach (var fiche in fichesASupprimer)
+                {
+                    // Appeler la méthode de suppression du contrôleur
+                    if (FicheFraisController.DeleteFicheFrais(fiche.IdFicheFrais))
+                    {
+                        nbSupprimees++;
+                    }
+                }
+                
+                // Afficher un message de confirmation
+                MessageBox.Show($"{nbSupprimees} fiche(s) de frais supprimée(s) avec succès.",
+                    "Suppression", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                
+                // Recharger la liste des fiches
+                LoadFicheFrais();
+            }
         }
 
         private void btnLogout_Click(object sender, EventArgs e)

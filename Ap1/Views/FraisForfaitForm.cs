@@ -72,12 +72,7 @@ namespace GSB_demo.Views
             }
         }
 
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void LigneFraisForfaitDG_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        private void TotalPriceFraisForfait_Click(object sender, EventArgs e)
         {
 
         }
