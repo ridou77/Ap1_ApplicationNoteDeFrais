@@ -30,7 +30,7 @@
         {
             label1 = new Label();
             LigneFraisForfaitDG = new DataGridView();
-            button1 = new Button();
+            btnAddFraisForfait = new Button();
             button2 = new Button();
             dataGridView2 = new DataGridView();
             label2 = new Label();
@@ -61,15 +61,15 @@
             LigneFraisForfaitDG.Size = new Size(418, 391);
             LigneFraisForfaitDG.TabIndex = 1;
             // 
-            // button1
+            // btnAddFraisForfait
             // 
-            button1.Location = new Point(168, 581);
-            button1.Name = "button1";
-            button1.Size = new Size(137, 56);
-            button1.TabIndex = 2;
-            button1.Text = "Ajouter un frais forfait";
-            button1.UseVisualStyleBackColor = true;
-            button1.Click += button1_Click;
+            btnAddFraisForfait.Location = new Point(168, 581);
+            btnAddFraisForfait.Name = "btnAddFraisForfait";
+            btnAddFraisForfait.Size = new Size(137, 56);
+            btnAddFraisForfait.TabIndex = 2;
+            btnAddFraisForfait.Text = "Ajouter un frais forfait";
+            btnAddFraisForfait.UseVisualStyleBackColor = true;
+            btnAddFraisForfait.Click += btnAddFraisForfait_Click;
             // 
             // button2
             // 
@@ -124,7 +124,6 @@
             TotalPriceFraisForfait.Size = new Size(75, 20);
             TotalPriceFraisForfait.TabIndex = 8;
             TotalPriceFraisForfait.Text = "Prix total :";
-            TotalPriceFraisForfait.Click += TotalPriceFraisForfait_Click;
             // 
             // TotalPriceFraisHorsForfait
             // 
@@ -157,7 +156,7 @@
             Controls.Add(label2);
             Controls.Add(dataGridView2);
             Controls.Add(button2);
-            Controls.Add(button1);
+            Controls.Add(btnAddFraisForfait);
             Controls.Add(LigneFraisForfaitDG);
             Controls.Add(label1);
             Name = "FraisForfaitForm";
@@ -172,7 +171,7 @@
 
         private Label label1;
         private DataGridView LigneFraisForfaitDG;
-        private Button button1;
+        private Button btnAddFraisForfait;
         private Button button2;
         private DataGridView dataGridView2;
         private Label label2;

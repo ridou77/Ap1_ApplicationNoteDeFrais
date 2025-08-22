@@ -16,14 +16,54 @@ namespace GSB_demo.Views
     public partial class FraisForfaitForm : Form
     {
         private FicheFrais ficheFrais;
-
         private LigneFraisController ligneFraisController = new LigneFraisController();
+        private TypeFraisController typeFraisController = new TypeFraisController();
 
         private void LoadLignesFraisForfait()
         {
             var lignes = ligneFraisController.GetAllLignesFraisForfait(ficheFrais.IdFicheFrais);
             LigneFraisForfaitDG.DataSource = lignes;
+            
+            // Calculer le prix total
+            CalculerEtAfficherPrixTotal();
         }
+        
+        private void CalculerEtAfficherPrixTotal()
+        {
+            try
+            {
+                // Récupérer tous les types de frais pour avoir accès aux tarifs
+                var typesFrais = typeFraisController.GetAllTypeFrais();
+                
+                // Récupérer les lignes de frais forfait
+                var lignes = ligneFraisController.GetAllLignesFraisForfait(ficheFrais.IdFicheFrais);
+                
+                // Calculer le montant total
+                decimal prixTotal = 0;
+                
+                foreach (var ligne in lignes)
+                {
+                    // Trouver le type de frais correspondant
+                    var typeFrais = typesFrais.FirstOrDefault(tf => tf.IdTypeFrais == ligne.IdTypeFrais);
+                    
+                    if (typeFrais != null)
+                    {
+                        // Calculer le montant pour cette ligne (quantité × tarif)
+                        decimal montantLigne = ligne.Quantite * typeFrais.TarifTypeFrais;
+                        prixTotal += montantLigne;
+                    }
+                }
+                
+                // Afficher le prix total dans le label
+                TotalPriceFraisForfait.Text = $"Prix total : {prixTotal:C2}";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erreur lors du calcul du prix total : {ex.Message}",
+                    "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+        
         private void InitializeInterface()
         {
             LigneFraisForfaitDG.AutoGenerateColumns = false;
@@ -54,7 +94,7 @@ namespace GSB_demo.Views
             LoadLignesFraisForfait();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnAddFraisForfait_Click(object sender, EventArgs e)
         {
             try
             {
@@ -70,11 +110,6 @@ namespace GSB_demo.Views
                 MessageBox.Show($"Une erreur est survenue : {ex.Message}",
                     "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-        }
-
-        private void TotalPriceFraisForfait_Click(object sender, EventArgs e)
-        {
-
         }
     }
 }
