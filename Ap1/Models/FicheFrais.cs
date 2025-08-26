@@ -1,5 +1,5 @@
-﻿namespace GSB_demo.Models
-{
+﻿namespace GSB_demo.Models;
+
     public class FicheFrais
     {
         public int IdFicheFrais { get; set; }
@@ -24,4 +24,3 @@
 
 
     }
-}

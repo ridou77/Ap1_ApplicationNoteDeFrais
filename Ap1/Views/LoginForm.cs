@@ -1,5 +1,5 @@
 ﻿using GSB_demo.Utils;
-using GSB_demo.Controllers;
+using GSB_demo.Manager;
 using GSB_demo.Models;
 using GSB_demo.Utils;
 
@@ -7,14 +7,14 @@ namespace GSB_demo.Views
 {
     public partial class LoginForm : Form
     {
-        private AuthController authController;
+        private AuthManager authController;
 
         public User ConnectedUser { get; private set; }
 
         public LoginForm()
         {
             InitializeComponent();
-            authController = new AuthController();
+            authController = new AuthManager();
 
             // Test de la connexion à la base de données au démarrage
             if (!DatabaseConnection.TestConnection())

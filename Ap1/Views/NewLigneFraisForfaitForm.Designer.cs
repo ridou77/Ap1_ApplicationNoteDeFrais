@@ -1,6 +1,6 @@
 ﻿namespace GSB_demo.Views
 {
-    partial class NewLigneFraisForm
+    partial class NewLigneFraisForfaitForm
     {
         /// <summary>
         /// Required designer variable.
@@ -56,7 +56,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(34, 108);
+            label2.Location = new Point(24, 108);
             label2.Name = "label2";
             label2.Size = new Size(117, 20);
             label2.TabIndex = 3;
@@ -72,7 +72,7 @@
             // 
             // btnAddLigneFrais
             // 
-            btnAddLigneFrais.Location = new Point(335, 297);
+            btnAddLigneFrais.Location = new Point(293, 192);
             btnAddLigneFrais.Name = "btnAddLigneFrais";
             btnAddLigneFrais.Size = new Size(133, 49);
             btnAddLigneFrais.TabIndex = 5;
@@ -80,17 +80,17 @@
             btnAddLigneFrais.UseVisualStyleBackColor = true;
             btnAddLigneFrais.Click += btnAddLigneFrais_Click;
             // 
-            // NewLigneFraisForm
+            // NewLigneFraisForfaitForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(516, 387);
+            ClientSize = new Size(464, 273);
             Controls.Add(btnAddLigneFrais);
             Controls.Add(choixNombreFrais);
             Controls.Add(label2);
             Controls.Add(listeFraisDefini);
             Controls.Add(label1);
-            Name = "NewLigneFraisForm";
+            Name = "NewLigneFraisForfaitForm";
             Text = "NewFicheFrais";
             ((System.ComponentModel.ISupportInitialize)choixNombreFrais).EndInit();
             ResumeLayout(false);

@@ -1,59 +1,58 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using GSB_demo.Controller;
+﻿using GSB_demo.Manager;
 using GSB_demo.Models;
-using GSB_GestionnairePatients.Controllers;
 
 namespace GSB_demo.Views
 {
-    public partial class FraisForfaitForm : Form
+    public partial class FraisForm : Form
     {
         private FicheFrais ficheFrais;
-        private LigneFraisController ligneFraisController = new LigneFraisController();
-        private TypeFraisController typeFraisController = new TypeFraisController();
+        private LigneFraisManager ligneFraisManager = new LigneFraisManager();
+        private TypeFraisManager typeFraisManager = new TypeFraisManager();
 
         private void LoadLignesFraisForfait()
         {
-            var lignes = ligneFraisController.GetAllLignesFraisForfait(ficheFrais.IdFicheFrais);
+            var lignes = ligneFraisManager.GetAllLignesFraisForfait(ficheFrais.IdFicheFrais);
             LigneFraisForfaitDG.DataSource = lignes;
-            
+
             // Calculer le prix total
-            CalculerEtAfficherPrixTotal();
+            CalcAndPrintPrixTotal();
         }
-        
-        private void CalculerEtAfficherPrixTotal()
+
+        private void LoadLignesFraisHF()
+        {
+            var lignes = ligneFraisManager.GetAllLignesFraisHF(ficheFrais.IdFicheFrais);
+            ligneFraisHFDG.DataSource = lignes;
+
+            // Calculer le prix total
+            CalcAndPrintPrixTotal();
+        }
+
+        private void CalcAndPrintPrixTotal()
         {
             try
             {
                 // Récupérer tous les types de frais pour avoir accès aux tarifs
-                var typesFrais = typeFraisController.GetAllTypeFrais();
-                
+                var typesFrais = typeFraisManager.GetAllTypeFrais();
+
                 // Récupérer les lignes de frais forfait
-                var lignes = ligneFraisController.GetAllLignesFraisForfait(ficheFrais.IdFicheFrais);
-                
+                var lignes = ligneFraisManager.GetAllLignesFraisForfait(ficheFrais.IdFicheFrais);
+
                 // Calculer le montant total
                 decimal prixTotal = 0;
-                
+
                 foreach (var ligne in lignes)
                 {
-                    // Trouver le type de frais correspondant
+                    // Trouver le type de frais
                     var typeFrais = typesFrais.FirstOrDefault(tf => tf.IdTypeFrais == ligne.IdTypeFrais);
-                    
+
                     if (typeFrais != null)
                     {
-                        // Calculer le montant pour cette ligne (quantité × tarif)
+                        // Calculer le montant pour la ligne en question (quantité × tarif)
                         decimal montantLigne = ligne.Quantite * typeFrais.TarifTypeFrais;
                         prixTotal += montantLigne;
                     }
                 }
-                
+
                 // Afficher le prix total dans le label
                 TotalPriceFraisForfait.Text = $"Prix total : {prixTotal:C2}";
             }
@@ -63,7 +62,7 @@ namespace GSB_demo.Views
                     "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-        
+
         private void InitializeInterface()
         {
             LigneFraisForfaitDG.AutoGenerateColumns = false;
@@ -85,7 +84,7 @@ namespace GSB_demo.Views
             });
         }
 
-        public FraisForfaitForm(FicheFrais fiche)
+        public FraisForm(FicheFrais fiche)
         {
             InitializeComponent();
             InitializeInterface();
@@ -101,8 +100,8 @@ namespace GSB_demo.Views
                 // Récupérer l'utilisateur connecté depuis le MainForm
                 User connectedUser = ((MainForm)this.Owner).connectedUser;
 
-                var NewLigneFraisForm = new NewLigneFraisForm(ficheFrais.IdFicheFrais);
-                NewLigneFraisForm.ShowDialog();
+                var NewLigneFraisForfaitForm = new NewLigneFraisForfaitForm(ficheFrais.IdFicheFrais);
+                NewLigneFraisForfaitForm.ShowDialog();
                 LoadLignesFraisForfait(); // Recharge la DataGridView après fermeture
             }
             catch (Exception ex)
@@ -110,6 +109,29 @@ namespace GSB_demo.Views
                 MessageBox.Show($"Une erreur est survenue : {ex.Message}",
                     "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void btn_AddFraisHF_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // Récupérer l'utilisateur connecté depuis le MainForm
+                User connectedUser = ((MainForm)this.Owner).connectedUser;
+
+                var NewLigneFraisHFForm = new NewLigneFraisHFForm(ficheFrais.IdFicheFrais);
+                NewLigneFraisHFForm.ShowDialog();
+                LoadLignesFraisHF(); // Recharge la DataGridView après fermeture
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Une erreur est survenue : {ex.Message}",
+                    "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void ligneFraisHFDG_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
         }
     }
 }

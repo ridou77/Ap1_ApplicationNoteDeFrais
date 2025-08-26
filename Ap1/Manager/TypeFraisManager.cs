@@ -4,9 +4,8 @@ using GSB_demo.Utils;
 using Microsoft.VisualBasic.Logging;
 using MySql.Data.MySqlClient;
 
-namespace GSB_demo.Controller
-{
-    public class TypeFraisController
+namespace GSB_demo.Manager;
+    public class TypeFraisManager
     {
         public List<TypeFrais> GetAllTypeFrais()
         {
@@ -41,4 +40,3 @@ namespace GSB_demo.Controller
             return typesFrais;
         }
     }
-}

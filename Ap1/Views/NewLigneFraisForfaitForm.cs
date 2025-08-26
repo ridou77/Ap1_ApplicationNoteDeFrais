@@ -1,13 +1,13 @@
-﻿using GSB_demo.Controller;
+﻿using GSB_demo.Manager;
 using GSB_demo.Models;
 
 namespace GSB_demo.Views
 {
-    public partial class NewLigneFraisForm : Form
+    public partial class NewLigneFraisForfaitForm : Form
     {
         private int idFicheFrais;
 
-        public NewLigneFraisForm(int idFicheFrais)
+        public NewLigneFraisForfaitForm(int idFicheFrais)
         {
             InitializeComponent();
             this.idFicheFrais = idFicheFrais;
@@ -16,7 +16,7 @@ namespace GSB_demo.Views
 
         private void ChargerTypesFrais()
         {
-            var controller = new TypeFraisController();
+            var controller = new TypeFraisManager();
             var typesFrais = controller.GetAllTypeFrais();
 
             listeFraisDefini.DataSource = typesFrais;
@@ -31,8 +31,8 @@ namespace GSB_demo.Views
                 int quantite = (int)choixNombreFrais.Value;
                 int idTypeFrais = selection.IdTypeFrais;
 
-                var controller = new LigneFraisController();
-                bool success = controller.AddLigneFrais(idFicheFrais, idTypeFrais, quantite);
+                var manager = new LigneFraisManager();
+                bool success = manager.AddLigneFraisForfait(idFicheFrais, idTypeFrais, quantite);
 
 
                 if (success)

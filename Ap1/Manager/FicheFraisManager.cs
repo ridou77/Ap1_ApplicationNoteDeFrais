@@ -1,12 +1,10 @@
 ﻿using System.Data;
-using System.Windows.Forms;
 using GSB_demo.Utils;
 using GSB_demo.Models;
 using MySql.Data.MySqlClient;
 
-namespace GSB_GestionnairePatients.Controllers
-{
-    public class FicheFraisController
+namespace GSB_GestionnairePatients.Manager;
+    public class FicheFraisManager
     {
         public List<FicheFrais> GetAllFicheFrais()
         {
@@ -183,4 +181,3 @@ namespace GSB_GestionnairePatients.Controllers
             }
         }
     }
-}

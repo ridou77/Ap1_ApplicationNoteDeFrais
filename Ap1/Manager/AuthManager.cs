@@ -4,9 +4,8 @@ using GSB_demo.Utils;
 using Microsoft.VisualBasic.Logging;
 using MySql.Data.MySqlClient;
 
-namespace GSB_demo.Controllers
-{
-    public class AuthController
+namespace GSB_demo.Manager;
+    public class AuthManager
     {
         public User AuthenticateUser(string login, string Mdp)
         {
@@ -53,4 +52,3 @@ namespace GSB_demo.Controllers
             return null;
         }
     }
-}

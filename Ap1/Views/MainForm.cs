@@ -1,12 +1,12 @@
 ﻿using System.Windows.Forms;
 using GSB_demo.Models;
-using GSB_GestionnairePatients.Controllers;
+using GSB_GestionnairePatients.Manager;
 
 namespace GSB_demo.Views
 {
     public partial class MainForm : Form
     {
-        private FicheFraisController FicheFraisController;
+        private FicheFraisManager FicheFraisController;
         public User connectedUser { get; private set; }
         private List<FicheFrais> allFicheFrais;
 
@@ -14,7 +14,7 @@ namespace GSB_demo.Views
         {
             InitializeComponent();
             connectedUser = user;
-            FicheFraisController = new FicheFraisController();
+            FicheFraisController = new FicheFraisManager();
 
             InitializeInterface();
             LoadFicheFrais();
@@ -227,12 +227,12 @@ namespace GSB_demo.Views
                     MotifRefusFicheFrais = ""
                 };
 
-                var controller = new FicheFraisController();
+                var controller = new FicheFraisManager();
 
                 if (controller.AddFicheFrais(nouvelleFiche))
                 {
                     // Passer l'ID de la fiche de frais nouvellement créée au formulaire
-                    var NewFicheFraisForm = new NewLigneFraisForm(nouvelleFiche.IdFicheFrais);
+                    var NewFicheFraisForm = new NewLigneFraisForfaitForm(nouvelleFiche.IdFicheFrais);
                     LoadFicheFrais();
                     txtSearch.Clear();
                 }
@@ -349,7 +349,7 @@ namespace GSB_demo.Views
                 var fiche = (FicheFrais)dgvFicheFrais.Rows[e.RowIndex].DataBoundItem;
 
                 // Ouvre le formulaire ou effectue l'action souhaitée
-                var fraisForfaitForm = new FraisForfaitForm(fiche);
+                var fraisForfaitForm = new FraisForm(fiche);
                 fraisForfaitForm.Owner = this; // dès quon met un bouton pour ouvrir un nouveau form, mettre l'owner, pour ne pas avoir l'erreur : "Object reference not set to an instance of an object"
                 fraisForfaitForm.ShowDialog();
             }

@@ -1,6 +1,6 @@
 ﻿namespace GSB_demo.Views
 {
-    partial class FraisForfaitForm
+    partial class FraisForm
     {
         /// <summary>
         /// Required designer variable.
@@ -31,8 +31,8 @@
             label1 = new Label();
             LigneFraisForfaitDG = new DataGridView();
             btnAddFraisForfait = new Button();
-            button2 = new Button();
-            dataGridView2 = new DataGridView();
+            btn_AddFraisHF = new Button();
+            ligneFraisHFDG = new DataGridView();
             label2 = new Label();
             label3 = new Label();
             FraisForfaitStatus = new Label();
@@ -40,7 +40,7 @@
             TotalPriceFraisHorsForfait = new Label();
             FraisHorsForfaitStatus = new Label();
             ((System.ComponentModel.ISupportInitialize)LigneFraisForfaitDG).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)dataGridView2).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)ligneFraisHFDG).BeginInit();
             SuspendLayout();
             // 
             // label1
@@ -71,23 +71,25 @@
             btnAddFraisForfait.UseVisualStyleBackColor = true;
             btnAddFraisForfait.Click += btnAddFraisForfait_Click;
             // 
-            // button2
+            // btn_AddFraisHF
             // 
-            button2.Location = new Point(744, 571);
-            button2.Name = "button2";
-            button2.Size = new Size(137, 56);
-            button2.TabIndex = 3;
-            button2.Text = "Ajouter un frais hors forfait";
-            button2.UseVisualStyleBackColor = true;
+            btn_AddFraisHF.Location = new Point(744, 571);
+            btn_AddFraisHF.Name = "btn_AddFraisHF";
+            btn_AddFraisHF.Size = new Size(137, 56);
+            btn_AddFraisHF.TabIndex = 3;
+            btn_AddFraisHF.Text = "Ajouter un frais hors forfait";
+            btn_AddFraisHF.UseVisualStyleBackColor = true;
+            btn_AddFraisHF.Click += btn_AddFraisHF_Click;
             // 
-            // dataGridView2
+            // ligneFraisHFDG
             // 
-            dataGridView2.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView2.Location = new Point(606, 101);
-            dataGridView2.Name = "dataGridView2";
-            dataGridView2.RowHeadersWidth = 51;
-            dataGridView2.Size = new Size(396, 391);
-            dataGridView2.TabIndex = 4;
+            ligneFraisHFDG.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            ligneFraisHFDG.Location = new Point(606, 101);
+            ligneFraisHFDG.Name = "ligneFraisHFDG";
+            ligneFraisHFDG.RowHeadersWidth = 51;
+            ligneFraisHFDG.Size = new Size(396, 391);
+            ligneFraisHFDG.TabIndex = 4;
+            ligneFraisHFDG.CellContentClick += ligneFraisHFDG_CellContentClick;
             // 
             // label2
             // 
@@ -143,7 +145,7 @@
             FraisHorsForfaitStatus.TabIndex = 9;
             FraisHorsForfaitStatus.Text = "Statut : ";
             // 
-            // FraisForfaitForm
+            // FraisForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -154,15 +156,15 @@
             Controls.Add(FraisForfaitStatus);
             Controls.Add(label3);
             Controls.Add(label2);
-            Controls.Add(dataGridView2);
-            Controls.Add(button2);
+            Controls.Add(ligneFraisHFDG);
+            Controls.Add(btn_AddFraisHF);
             Controls.Add(btnAddFraisForfait);
             Controls.Add(LigneFraisForfaitDG);
             Controls.Add(label1);
-            Name = "FraisForfaitForm";
+            Name = "FraisForm";
             Text = "FraisForfaitForm";
             ((System.ComponentModel.ISupportInitialize)LigneFraisForfaitDG).EndInit();
-            ((System.ComponentModel.ISupportInitialize)dataGridView2).EndInit();
+            ((System.ComponentModel.ISupportInitialize)ligneFraisHFDG).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -172,8 +174,8 @@
         private Label label1;
         private DataGridView LigneFraisForfaitDG;
         private Button btnAddFraisForfait;
-        private Button button2;
-        private DataGridView dataGridView2;
+        private Button btn_AddFraisHF;
+        private DataGridView ligneFraisHFDG;
         private Label label2;
         private Label label3;
         private Label FraisForfaitStatus;
