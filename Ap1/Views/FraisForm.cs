@@ -91,6 +91,7 @@ namespace GSB_demo.Views
             ficheFrais = fiche;
             label1.Text = $"Fiche de frais du : {ficheFrais.DateCreationFicheFrais:dd/MM/yyyy}";
             LoadLignesFraisForfait();
+            LoadLignesFraisHF();
         }
 
         private void btnAddFraisForfait_Click(object sender, EventArgs e)
@@ -127,11 +128,6 @@ namespace GSB_demo.Views
                 MessageBox.Show($"Une erreur est survenue : {ex.Message}",
                     "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-        }
-
-        private void ligneFraisHFDG_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-
         }
     }
 }

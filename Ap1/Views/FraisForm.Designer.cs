@@ -89,7 +89,6 @@
             ligneFraisHFDG.RowHeadersWidth = 51;
             ligneFraisHFDG.Size = new Size(396, 391);
             ligneFraisHFDG.TabIndex = 4;
-            ligneFraisHFDG.CellContentClick += ligneFraisHFDG_CellContentClick;
             // 
             // label2
             // 
