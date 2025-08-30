@@ -117,11 +117,13 @@ namespace GSB_demo.Views
                     // Ajout d'utilisateur, modification, suppression
                     // Gestion des types de frais : Ajout d'un type de frais, modification, suppression
                     btnAdd.Visible = true;
-                    btnAdd.Enabled = true;
+                    btnAdd.Visible = true;
                     btnEdit.Visible = true;
-                    btnEdit.Enabled = true;
+                    btnEdit.Visible = true;
                     btnDelete.Visible = true;
-                    btnDelete.Enabled = true;
+                    btnDelete.Visible = true;
+                    btn_AddTypeFrais.Visible = true;
+                    btn_AddUser.Visible = true;
                     break;
                 case User.RoleUser.COMPTABLE: // Comptable
                     // Recherche de fiche de frais par utilisateur
@@ -130,11 +132,13 @@ namespace GSB_demo.Views
                     // Refus sur un seul ou plusieurs frais
                     // Refus avec motif écrit
                     btnAdd.Visible = false;
-                    btnAdd.Enabled = false;
+                    btnAdd.Visible = false;
                     btnEdit.Visible = true;
-                    btnEdit.Enabled = true;
+                    btnEdit.Visible = true;
                     btnDelete.Visible = false;
-                    btnDelete.Enabled = false;
+                    btnDelete.Visible = false;
+                    btn_AddTypeFrais.Visible = false;
+                    btn_AddUser.Visible = false;
                     break;
                 case User.RoleUser.VISITEUR: // Visiteur
                     // Créer une nouvelle fiche de frais
@@ -142,20 +146,24 @@ namespace GSB_demo.Views
                     // Consulter les fiches de frais
                     // Lier des justificatifs à la fiche de frais
                     btnAdd.Visible = true;
-                    btnAdd.Enabled = true;
+                    btnAdd.Visible = true;
                     btnEdit.Visible = true;
-                    btnEdit.Enabled = true;
+                    btnEdit.Visible = true;
                     btnDelete.Visible = false;
-                    btnDelete.Enabled = false;
+                    btnDelete.Visible = false;
+                    btn_AddTypeFrais.Visible = false;
+                    btn_AddUser.Visible = false;
                     break;
                 default:
                     // Aucun droit
                     btnAdd.Visible = false;
-                    btnAdd.Enabled = false;
+                    btnAdd.Visible = false;
                     btnEdit.Visible = false;
-                    btnEdit.Enabled = false;
+                    btnEdit.Visible = false;
                     btnDelete.Visible = false;
-                    btnDelete.Enabled = false;
+                    btnDelete.Visible = false;
+                    btn_AddTypeFrais.Visible = false;
+                    btn_AddUser.Visible = false;
                     break;
             }
         }
@@ -267,12 +275,12 @@ namespace GSB_demo.Views
 
             // Liste pour stocker les fiches à supprimer
             List<FicheFrais> fichesASupprimer = new List<FicheFrais>();
-            
+
             // Parcourir toutes les lignes de la DataGridView
             for (int i = 0; i < dgvFicheFrais.Rows.Count; i++)
             {
                 // Vérifier si la case à cocher est cochée (colonne "Selectionner")
-                if (dgvFicheFrais.Rows[i].Cells["Selectionner"].Value != null && 
+                if (dgvFicheFrais.Rows[i].Cells["Selectionner"].Value != null &&
                     (bool)dgvFicheFrais.Rows[i].Cells["Selectionner"].Value == true)
                 {
                     // Ajouter la fiche de frais à la liste des fiches à supprimer
@@ -280,7 +288,7 @@ namespace GSB_demo.Views
                     fichesASupprimer.Add(fiche);
                 }
             }
-            
+
             // Vérifier s'il y a des fiches à supprimer
             if (fichesASupprimer.Count == 0)
             {
@@ -288,12 +296,12 @@ namespace GSB_demo.Views
                     "Aucune sélection", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-            
+
             if (MessageBox.Show($"Êtes-vous sûr de vouloir supprimer {fichesASupprimer.Count} fiche(s) de frais ?",
                 "Confirmation de suppression", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
                 int nbSupprimees = 0;
-                
+
                 // Parcourir la liste des fiches à supprimer
                 foreach (var fiche in fichesASupprimer)
                 {
@@ -303,11 +311,11 @@ namespace GSB_demo.Views
                         nbSupprimees++;
                     }
                 }
-                
+
                 // Afficher un message de confirmation
                 MessageBox.Show($"{nbSupprimees} fiche(s) de frais supprimée(s) avec succès.",
                     "Suppression", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                
+
                 // Recharger la liste des fiches
                 LoadFicheFrais();
             }

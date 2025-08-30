@@ -15,7 +15,7 @@ namespace GSB_demo.Views
             LigneFraisForfaitDG.DataSource = lignes;
 
             // Calculer le prix total
-            CalcAndPrintPrixTotal();
+            CalcAndPrintPrixTotalFF();
         }
 
         private void LoadLignesFraisHF()
@@ -24,10 +24,10 @@ namespace GSB_demo.Views
             ligneFraisHFDG.DataSource = lignes;
 
             // Calculer le prix total
-            CalcAndPrintPrixTotal();
+            CalcAndPrintPrixTotalHF();
         }
 
-        private void CalcAndPrintPrixTotal()
+        private void CalcAndPrintPrixTotalFF()
         {
             try
             {
@@ -63,6 +63,30 @@ namespace GSB_demo.Views
             }
         }
 
+        private void CalcAndPrintPrixTotalHF()
+        {
+            try
+            {
+                var lignes = ligneFraisManager.GetAllLignesFraisHF(ficheFrais.IdFicheFrais) ?? new List<LigneFraisHF>();
+
+                decimal prixTotal = 0m;
+
+                foreach (var ligne in lignes)
+                {
+                    // Utiliser la propriété MontantFraisHF du modèle
+                    prixTotal += ligne.MontantFraisHF;
+                }
+
+                // Afficher le prix total des frais hors forfait dans le label dédié
+                TotalPriceFraisHorsForfait.Text = $"Prix total : {prixTotal:C2}";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erreur lors du calcul du total hors forfait : {ex.Message}",
+                    "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
         private void InitializeInterface()
         {
             LigneFraisForfaitDG.AutoGenerateColumns = false;
@@ -83,11 +107,55 @@ namespace GSB_demo.Views
                 Width = 80
             });
         }
+        private void InitializeInterfaceHF()
+        {
+            ligneFraisHFDG.AutoGenerateColumns = false;
+            ligneFraisHFDG.Columns.Clear();
+
+            ligneFraisHFDG.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = "LibelleFraisHF",
+                HeaderText = "Libellé Frais HF",
+                DataPropertyName = "LibelleFraisHF",
+                Width = 150
+            });
+            ligneFraisHFDG.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = "DateDepenseFraisHF",
+                HeaderText = "Date Dépense",
+                DataPropertyName = "DateDepenseFraisHF",
+                Width = 100
+            });
+            ligneFraisHFDG.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = "MontantFraisHF",
+                HeaderText = "Montant",
+                DataPropertyName = "MontantFraisHF",
+                Width = 80
+            });
+            ligneFraisHFDG.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = "StatusFraisHF",
+                HeaderText = "Statut",
+                DataPropertyName = "StatusFraisHF",
+                Width = 80
+            });
+            var btnVoirMotifRefus = new DataGridViewButtonColumn
+            {
+                Name = "MotifRefusFraisHF",
+                HeaderText = "Motif Refus",
+                Text = "Voir le motif du refus",
+                UseColumnTextForButtonValue = true,
+                Width = 100
+            };
+            ligneFraisHFDG.Columns.Insert(5, btnVoirMotifRefus);
+        }
 
         public FraisForm(FicheFrais fiche)
         {
             InitializeComponent();
             InitializeInterface();
+            InitializeInterfaceHF();
             ficheFrais = fiche;
             label1.Text = $"Fiche de frais du : {ficheFrais.DateCreationFicheFrais:dd/MM/yyyy}";
             LoadLignesFraisForfait();

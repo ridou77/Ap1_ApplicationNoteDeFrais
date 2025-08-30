@@ -68,7 +68,8 @@
             choixNombreFrais.Name = "choixNombreFrais";
             choixNombreFrais.Size = new Size(91, 27);
             choixNombreFrais.TabIndex = 4;
-            choixNombreFrais.ValueChanged += choixNombreFrais_ValueChanged;
+            choixNombreFrais.Maximum = 1000000000;
+            choixNombreFrais.DecimalPlaces = 2;
             // 
             // btnAddLigneFrais
             // 

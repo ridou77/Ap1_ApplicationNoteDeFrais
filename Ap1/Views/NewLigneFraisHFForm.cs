@@ -8,7 +8,7 @@ namespace GSB_demo.Views
     public partial class NewLigneFraisHFForm : Form
     {
         private int idFicheFrais;
-        
+
         public NewLigneFraisHFForm(int idFicheFrais)
         {
             InitializeComponent();
@@ -27,7 +27,7 @@ namespace GSB_demo.Views
             DateTime dateDepense = dtp_NewLigneFraisHF.Value;
             decimal montant = PriceNumericUpDown.Value;
 
-            bool success = manager.AddLigneFraisHF(idFicheFrais, libelle, dateDepense, montant, null, null );
+            bool success = manager.AddLigneFraisHF(idFicheFrais, libelle, dateDepense, montant, null, null);
 
             if (success)
             {

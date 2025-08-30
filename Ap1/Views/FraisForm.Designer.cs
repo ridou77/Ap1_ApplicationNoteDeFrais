@@ -57,6 +57,7 @@
             LigneFraisForfaitDG.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             LigneFraisForfaitDG.Location = new Point(59, 101);
             LigneFraisForfaitDG.Name = "LigneFraisForfaitDG";
+            LigneFraisForfaitDG.RowHeadersVisible = false;
             LigneFraisForfaitDG.RowHeadersWidth = 51;
             LigneFraisForfaitDG.Size = new Size(418, 391);
             LigneFraisForfaitDG.TabIndex = 1;
@@ -86,8 +87,9 @@
             ligneFraisHFDG.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             ligneFraisHFDG.Location = new Point(606, 101);
             ligneFraisHFDG.Name = "ligneFraisHFDG";
+            ligneFraisHFDG.RowHeadersVisible = false;
             ligneFraisHFDG.RowHeadersWidth = 51;
-            ligneFraisHFDG.Size = new Size(396, 391);
+            ligneFraisHFDG.Size = new Size(523, 391);
             ligneFraisHFDG.TabIndex = 4;
             // 
             // label2
@@ -102,7 +104,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(706, 68);
+            label3.Location = new Point(786, 68);
             label3.Name = "label3";
             label3.Size = new Size(175, 20);
             label3.TabIndex = 6;
@@ -148,7 +150,7 @@
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1070, 679);
+            ClientSize = new Size(1198, 679);
             Controls.Add(TotalPriceFraisHorsForfait);
             Controls.Add(FraisHorsForfaitStatus);
             Controls.Add(TotalPriceFraisForfait);

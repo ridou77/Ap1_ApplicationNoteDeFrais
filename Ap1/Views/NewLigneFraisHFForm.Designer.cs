@@ -64,6 +64,8 @@
             PriceNumericUpDown.Name = "PriceNumericUpDown";
             PriceNumericUpDown.Size = new Size(96, 27);
             PriceNumericUpDown.TabIndex = 2;
+            PriceNumericUpDown.Maximum = 10000000;
+            PriceNumericUpDown.DecimalPlaces = 2;
             // 
             // PriceLbl
             // 

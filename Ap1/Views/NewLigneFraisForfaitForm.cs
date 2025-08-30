@@ -50,10 +50,5 @@ namespace GSB_demo.Views
                 MessageBox.Show("Veuillez sélectionner un type de frais.", "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
-
-        private void choixNombreFrais_ValueChanged(object sender, EventArgs e)
-        {
-            int quantite = (int)choixNombreFrais.Value;
-        }
     }
 }
