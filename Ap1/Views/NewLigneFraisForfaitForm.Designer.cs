@@ -64,12 +64,12 @@
             // 
             // choixNombreFrais
             // 
+            choixNombreFrais.DecimalPlaces = 2;
             choixNombreFrais.Location = new Point(335, 106);
+            choixNombreFrais.Maximum = new decimal(new int[] { 1000000000, 0, 0, 0 });
             choixNombreFrais.Name = "choixNombreFrais";
             choixNombreFrais.Size = new Size(91, 27);
             choixNombreFrais.TabIndex = 4;
-            choixNombreFrais.Maximum = 1000000000;
-            choixNombreFrais.DecimalPlaces = 2;
             // 
             // btnAddLigneFrais
             // 

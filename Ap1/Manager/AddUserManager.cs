@@ -36,8 +36,6 @@ namespace GSB_demo.Manager
             }
             catch (Exception ex)
             {
-                // Log l'erreur et afficher un message
-                Console.WriteLine($"Erreur lors de l'ajout de l'utilisateur : {ex.Message}");
                 MessageBox.Show($"Erreur lors de l'ajout de l'utilisateur : {ex.Message}", 
                     "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;

@@ -158,6 +158,7 @@
             btn_deleteFF.TabIndex = 11;
             btn_deleteFF.Text = "Supprimer une ligne de frais forfait";
             btn_deleteFF.UseVisualStyleBackColor = true;
+            btn_deleteFF.Click += btn_deleteFF_Click;
             // 
             // btn_UpdateFF
             // 
@@ -167,6 +168,7 @@
             btn_UpdateFF.TabIndex = 12;
             btn_UpdateFF.Text = "Modifier une ligne de frais forfait";
             btn_UpdateFF.UseVisualStyleBackColor = true;
+            btn_UpdateFF.Click += btn_UpdateFF_Click;
             // 
             // btn_DeleteHF
             // 
@@ -176,6 +178,7 @@
             btn_DeleteHF.TabIndex = 13;
             btn_DeleteHF.Text = "Supprimer une ligne de frais hors forfait";
             btn_DeleteHF.UseVisualStyleBackColor = true;
+            btn_DeleteHF.Click += btn_DeleteHF_Click;
             // 
             // btn_UpdateHF
             // 
@@ -185,6 +188,7 @@
             btn_UpdateHF.TabIndex = 14;
             btn_UpdateHF.Text = "Modifier une ligne de frais hors forfait";
             btn_UpdateHF.UseVisualStyleBackColor = true;
+            btn_UpdateHF.Click += btn_UpdateHF_Click;
             // 
             // FraisForm
             // 

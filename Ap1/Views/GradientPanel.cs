@@ -20,7 +20,7 @@ namespace GSB_demo.Views
 
         private void GradientPanel_Resize(object sender, EventArgs e)
         {
-            this.Invalidate(); // Redraw the panel when resized
+            this.Invalidate();
         }
 
         protected override void OnPaint(PaintEventArgs e)

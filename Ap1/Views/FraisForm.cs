@@ -16,7 +16,6 @@ namespace GSB_demo.Views
             var lignes = ligneFraisManager.GetAllLignesFraisForfait(ficheFrais.IdFicheFrais);
             LigneFraisForfaitDG.DataSource = lignes;
 
-            // Calculer le prix total
             CalcAndPrintPrixTotalFF();
         }
 
@@ -25,7 +24,6 @@ namespace GSB_demo.Views
             var lignes = ligneFraisManager.GetAllLignesFraisHF(ficheFrais.IdFicheFrais);
             ligneFraisHFDG.DataSource = lignes;
 
-            // Calculer le prix total
             CalcAndPrintPrixTotalHF();
         }
 
@@ -40,7 +38,7 @@ namespace GSB_demo.Views
                 btn_UpdateHF.Visible = false;
                 return;
             }
-            
+
             // Configurer les permissions selon le rôle
             switch (connectedUser.Role)
             {
@@ -75,29 +73,25 @@ namespace GSB_demo.Views
         {
             try
             {
-                // Récupérer tous les types de frais pour avoir accès aux tarifs
                 var typesFrais = typeFraisManager.GetAllTypeFrais();
 
-                // Récupérer les lignes de frais forfait
                 var lignes = ligneFraisManager.GetAllLignesFraisForfait(ficheFrais.IdFicheFrais);
 
-                // Calculer le montant total
                 decimal prixTotal = 0;
 
                 foreach (var ligne in lignes)
                 {
-                    // Trouver le type de frais
                     var typeFrais = typesFrais.FirstOrDefault(tf => tf.IdTypeFrais == ligne.IdTypeFrais);
 
                     if (typeFrais != null)
                     {
-                        // Calculer le montant pour la ligne en question (quantité × tarif)
+                        //quantité × tarif)
                         decimal montantLigne = ligne.Quantite * typeFrais.TarifTypeFrais;
                         prixTotal += montantLigne;
                     }
                 }
 
-                // Afficher le prix total dans le label
+                // Afficher le prix total dans le label( a reutiliser)
                 TotalPriceFraisForfait.Text = $"Prix total : {prixTotal:C2}";
             }
             catch (Exception ex)
@@ -117,11 +111,9 @@ namespace GSB_demo.Views
 
                 foreach (var ligne in lignes)
                 {
-                    // Utiliser la propriété MontantFraisHF du modèle
-                    prixTotal += ligne.MontantFraisHF;
+                   prixTotal += ligne.MontantFraisHF;
                 }
 
-                // Afficher le prix total des frais hors forfait dans le label dédié
                 TotalPriceFraisHorsForfait.Text = $"Prix total : {prixTotal:C2}";
             }
             catch (Exception ex)
@@ -152,9 +144,9 @@ namespace GSB_demo.Views
             });
             LigneFraisForfaitDG.Columns.Add(new DataGridViewTextBoxColumn
             {
-                Name = "StatusFraisHF",
+                Name = "StatusFraisFF",
                 HeaderText = "Statut",
-                DataPropertyName = "StatusFraisHF",
+                DataPropertyName = "StatusFraisFF",
                 Width = 80
             });
             var checkBoxLigneFF = new DataGridViewCheckBoxColumn
@@ -222,17 +214,15 @@ namespace GSB_demo.Views
         {
             InitializeComponent();
             ficheFrais = fiche;
-            
-            // Nous initialisons l'interface avant de configurer les permissions
+
             InitializeInterface();
             InitializeInterfaceHF();
-            
+
             label1.Text = $"Fiche de frais du : {ficheFrais.DateCreationFicheFrais:dd/MM/yyyy}";
             LoadLignesFraisForfait();
             LoadLignesFraisHF();
         }
 
-        // Ajoutez cette méthode pour initialiser l'utilisateur et configurer les permissions
         public void SetConnectedUser(User user)
         {
             connectedUser = user;
@@ -261,6 +251,194 @@ namespace GSB_demo.Views
                 var NewLigneFraisHFForm = new NewLigneFraisHFForm(ficheFrais.IdFicheFrais);
                 NewLigneFraisHFForm.ShowDialog();
                 LoadLignesFraisHF();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Une erreur est survenue : {ex.Message}",
+                    "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btn_deleteFF_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                List<LigneFraisForfait> lignesASupprimer = new List<LigneFraisForfait>();
+
+                for (int i = 0; i < LigneFraisForfaitDG.Rows.Count; i++)
+                {
+                    if (LigneFraisForfaitDG.Rows[i].Cells["Selectionner"].Value != null &&
+                        (bool)LigneFraisForfaitDG.Rows[i].Cells["Selectionner"].Value == true)
+                    {
+                        var ligne = (LigneFraisForfait)LigneFraisForfaitDG.Rows[i].DataBoundItem;
+                        lignesASupprimer.Add(ligne);
+                    }
+                }
+
+                if (lignesASupprimer.Count == 0)
+                {
+                    MessageBox.Show("Veuillez cocher au moins une ligne à supprimer.",
+                        "Aucune sélection", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                if (MessageBox.Show($"Êtes-vous sûr de vouloir supprimer {lignesASupprimer.Count} ligne(s) de frais ?",
+                    "Confirmation de suppression", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                {
+                    int nbSupprimees = 0;
+
+                    foreach (var ligne in lignesASupprimer)
+                    {
+                        if (ligneFraisManager.DeleteLigneFraisForfait(ligne.IdLigneFraisForfait))
+                        {
+                            nbSupprimees++;
+                        }
+                    }
+
+                    MessageBox.Show($"{nbSupprimees} ligne(s) de frais supprimée(s) avec succès.",
+                        "Suppression", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    LoadLignesFraisForfait();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Une erreur est survenue : {ex.Message}",
+                    "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btn_UpdateFF_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                int lignesSelectionnees = 0;
+                LigneFraisForfait ligneAModifier = null;
+                int indexLigne = -1;
+
+                for (int i = 0; i < LigneFraisForfaitDG.Rows.Count; i++)
+                {
+                    if (LigneFraisForfaitDG.Rows[i].Cells["Selectionner"].Value != null &&
+                        (bool)LigneFraisForfaitDG.Rows[i].Cells["Selectionner"].Value == true)
+                    {
+                        lignesSelectionnees++;
+                        indexLigne = i;
+                        ligneAModifier = (LigneFraisForfait)LigneFraisForfaitDG.Rows[i].DataBoundItem;
+                    }
+                }
+
+                if (lignesSelectionnees == 0)
+                {
+                    MessageBox.Show("Veuillez sélectionner une ligne à modifier.",
+                        "Aucune sélection", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+                else if (lignesSelectionnees > 1)
+                {
+                    MessageBox.Show("Veuillez sélectionner une seule ligne à modifier.",
+                        "Plusieurs sélections", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                var modificationForm = new UpdateLigneFFForm(ligneAModifier);
+                if (modificationForm.ShowDialog() == DialogResult.OK)
+                {
+                    LoadLignesFraisForfait();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Une erreur est survenue : {ex.Message}",
+                    "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btn_DeleteHF_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                List<LigneFraisHF> lignesASupprimer = new List<LigneFraisHF>();
+
+                for (int i = 0; i < ligneFraisHFDG.Rows.Count; i++)
+                {
+                    if (ligneFraisHFDG.Rows[i].Cells["Selectionner"].Value != null &&
+                        (bool)ligneFraisHFDG.Rows[i].Cells["Selectionner"].Value == true)
+                    {
+                        var ligne = (LigneFraisHF)ligneFraisHFDG.Rows[i].DataBoundItem;
+                        lignesASupprimer.Add(ligne);
+                    }
+                }
+
+                if (lignesASupprimer.Count == 0)
+                {
+                    MessageBox.Show("Veuillez cocher au moins une ligne à supprimer.",
+                        "Aucune sélection", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                if (MessageBox.Show($"Êtes-vous sûr de vouloir supprimer {lignesASupprimer.Count} ligne(s) de frais hors forfait ?",
+                    "Confirmation de suppression", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                {
+                    int nbSupprimees = 0;
+
+                    foreach (var ligne in lignesASupprimer)
+                    {
+                        if (ligneFraisManager.DeleteLigneFraisHF(ligne.IdLigneFraisHF))
+                        {
+                            nbSupprimees++;
+                        }
+                    }
+
+                    MessageBox.Show($"{nbSupprimees} ligne(s) de frais hors forfait supprimée(s) avec succès.",
+                        "Suppression", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                    LoadLignesFraisHF();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Une erreur est survenue : {ex.Message}",
+                    "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btn_UpdateHF_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                int lignesSelectionnees = 0;
+                LigneFraisHF ligneAModifier = null;
+                int indexLigne = -1;
+
+                for (int i = 0; i < ligneFraisHFDG.Rows.Count; i++)
+                {
+                    if (ligneFraisHFDG.Rows[i].Cells["Selectionner"].Value != null &&
+                        (bool)ligneFraisHFDG.Rows[i].Cells["Selectionner"].Value == true)
+                    {
+                        lignesSelectionnees++;
+                        indexLigne = i;
+                        ligneAModifier = (LigneFraisHF)ligneFraisHFDG.Rows[i].DataBoundItem;
+                    }
+                }
+
+                if (lignesSelectionnees == 0)
+                {
+                    MessageBox.Show("Veuillez sélectionner une ligne à modifier.",
+                        "Aucune sélection", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+                else if (lignesSelectionnees > 1)
+                {
+                    MessageBox.Show("Veuillez sélectionner une seule ligne à modifier.",
+                        "Plusieurs sélections", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                var modificationForm = new UpdateLigneHFForm(ligneAModifier);
+                if (modificationForm.ShowDialog() == DialogResult.OK)
+                {
+                    LoadLignesFraisHF();
+                }
             }
             catch (Exception ex)
             {

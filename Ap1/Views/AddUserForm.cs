@@ -10,13 +10,11 @@ namespace GSB_demo.Views
             InitializeComponent();
             InitializeRoleComboBox();
             
-            // Associer l'événement au bouton
             btn_CreateUser.Click += btn_CreateUser_Click;
         }
 
         private void InitializeRoleComboBox()
         {
-            // Remplir la ComboBox avec les rôles disponibles
             comboBox_SelectUserRole.DataSource = Enum.GetValues(typeof(User.RoleUser));
             comboBox_SelectUserRole.DropDownStyle = ComboBoxStyle.DropDownList;
         }
@@ -25,14 +23,12 @@ namespace GSB_demo.Views
         {
             try
             {
-                // Récupérer les valeurs des champs du formulaire
                 string nom = txtBox_UserName.Text.Trim();
                 string prenom = txtBox_FirstName.Text.Trim();
                 string email = txtBox_Email.Text.Trim();
                 string login = txt_BoxIdConnect.Text.Trim();
                 string motDePasse = txtBox_MdpUser.Text.Trim();
                 
-                // Vérifier que comboBox_SelectUserRole.SelectedItem est valide
                 if (comboBox_SelectUserRole.SelectedItem == null)
                 {
                     MessageBox.Show("Veuillez sélectionner un rôle pour l'utilisateur.", 
@@ -43,7 +39,6 @@ namespace GSB_demo.Views
                 // Récupérer le rôle sélectionné
                 User.RoleUser role = (User.RoleUser)comboBox_SelectUserRole.SelectedItem;
 
-                // Vérification des champs obligatoires
                 if (string.IsNullOrEmpty(nom) || string.IsNullOrEmpty(prenom) ||
                     string.IsNullOrEmpty(email) || string.IsNullOrEmpty(login) || 
                     string.IsNullOrEmpty(motDePasse))
@@ -66,7 +61,6 @@ namespace GSB_demo.Views
                     UserCreationDate = DateTime.Now
                 };
 
-                // Créer et appeler le manager pour ajouter l'utilisateur
                 var userManager = new AddUserManager();
                 bool success = userManager.AddUser(nouvelUtilisateur);
 

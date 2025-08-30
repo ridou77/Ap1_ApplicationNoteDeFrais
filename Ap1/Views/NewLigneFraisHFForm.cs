@@ -14,7 +14,6 @@ namespace GSB_demo.Views
             InitializeComponent();
             this.idFicheFrais = idFicheFrais;
 
-            // Add the control to the form
             this.Controls.Add(dtp_NewLigneFraisHF);
         }
 
@@ -32,7 +31,7 @@ namespace GSB_demo.Views
             if (success)
             {
                 MessageBox.Show("Ligne de frais ajoutée avec succès !", "Succès", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                this.Close(); // Ferme le formulaire d'ajout
+                this.Close();
             }
             else
             {

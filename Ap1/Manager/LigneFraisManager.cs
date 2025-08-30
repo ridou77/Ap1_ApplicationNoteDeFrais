@@ -14,10 +14,11 @@ public class LigneFraisManager
             using (var connection = DatabaseConnection.GetConnection())
             {
                 connection.Open();
-                string query = @"SELECT lff.id_ligne_frais_forfait, lff.id_fiche_frais, lff.id_type_frais, lff.quantite, tf.libelle_type_frais
-                                     FROM ligne_frais_forfait lff
-                                     LEFT JOIN type_frais tf ON lff.id_type_frais = tf.id_type_frais
-                                     WHERE lff.id_fiche_frais = @idFicheFrais";
+                string query = @"SELECT lff.id_ligne_frais_forfait, lff.id_fiche_frais, lff.id_type_frais, lff.quantite, 
+                                    tf.libelle_type_frais, lff.etat_ligne_frais_forfait
+                                 FROM ligne_frais_forfait lff
+                                 LEFT JOIN type_frais tf ON lff.id_type_frais = tf.id_type_frais
+                                 WHERE lff.id_fiche_frais = @idFicheFrais";
                 using (var cmd = new MySqlCommand(query, connection))
                 {
                     cmd.Parameters.AddWithValue("@idFicheFrais", idFicheFrais);
@@ -31,7 +32,12 @@ public class LigneFraisManager
                                 IdFicheFrais = reader.GetInt32("id_fiche_frais"),
                                 IdTypeFrais = reader.GetInt32("id_type_frais"),
                                 Quantite = reader.GetInt32("quantite"),
-                                LibelleTypeFrais = reader.GetString("libelle_type_frais")
+                                LibelleTypeFrais = reader.GetString("libelle_type_frais"),
+                                StatusFraisFF = reader.IsDBNull(reader.GetOrdinal("etat_ligne_frais_forfait"))
+                                    ? LigneFraisForfait.StatusFraisff.EN_ATTENTE
+                                    : Enum.TryParse<LigneFraisForfait.StatusFraisff>(reader.GetString("etat_ligne_frais_forfait"), out var status)
+                                        ? status
+                                        : LigneFraisForfait.StatusFraisff.EN_ATTENTE
                             });
                         }
                     }
@@ -80,7 +86,6 @@ public class LigneFraisManager
             using (var connection = DatabaseConnection.GetConnection())
             {
                 connection.Open();
-                // Modifié pour utiliser id_fiche_frais au lieu de id_fiche
                 string query = @"SELECT lfh.id_ligne_frais_hf, lfh.id_fiche, lfh.libelle, lfh.date_depense, lfh.montant, lfh.etat, lfh.motif_refus
                              FROM ligne_frais_hf lfh
                              WHERE lfh.id_fiche = @idFicheFrais";
@@ -94,11 +99,10 @@ public class LigneFraisManager
                             ligneFraisHF.Add(new LigneFraisHF
                             {
                                 IdLigneFraisHF = reader.GetInt32("id_ligne_frais_hf"),
-                                IdFiche = reader.GetInt32("id_fiche"), // Utiliser la propriété correcte
+                                IdFiche = reader.GetInt32("id_fiche"),
                                 LibelleFraisHF = reader.GetString("libelle"),
                                 DateDepenseFraisHF = reader.GetDateTime("date_depense"),
                                 MontantFraisHF = reader.GetDecimal("montant"),
-                                // Utiliser IsDBNull avant de lire une colonne qui peut être null
                                 StatusFraisHF = reader.IsDBNull(reader.GetOrdinal("etat"))
                                     ? StatusFraishf.EN_ATTENTE
                                     : Enum.TryParse<StatusFraishf>(reader.GetString("etat"), out var status)
@@ -134,7 +138,6 @@ public class LigneFraisManager
                     cmd.Parameters.AddWithValue("@LibelleFraisHF", LibelleFraisHF);
                     cmd.Parameters.AddWithValue("@DateDepenseFraisHF", DateDepenseFraisHF);
                     cmd.Parameters.AddWithValue("@MontantFraisHF", MontantFraisHF);
-                    // Gérer correctement les valeurs nulles
                     cmd.Parameters.AddWithValue("@StatusFraisHF", StatusFraisHF?.ToString() ?? StatusFraishf.EN_ATTENTE.ToString());
                     cmd.Parameters.AddWithValue("@MotifRefusFraisHF", MotifRefusFraisHF ?? (object)DBNull.Value);
                     return cmd.ExecuteNonQuery() > 0;
@@ -149,6 +152,133 @@ public class LigneFraisManager
         catch (Exception ex)
         {
             MessageBox.Show($"Erreur lors de l'ajout de la ligne de frais : {ex.Message}",
+                "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return false;
+        }
+    }
+
+    // Méthode pour supprimer une ligne de frais forfait
+    public bool DeleteLigneFraisForfait(int idLigneFraisForfait)
+    {
+        try
+        {
+            using (var connection = DatabaseConnection.GetConnection())
+            {
+                connection.Open();
+                string query = "DELETE FROM ligne_frais_forfait WHERE id_ligne_frais_forfait = @idLigneFraisForfait";
+                using (var cmd = new MySqlCommand(query, connection))
+                {
+                    cmd.Parameters.AddWithValue("@idLigneFraisForfait", idLigneFraisForfait);
+                    return cmd.ExecuteNonQuery() > 0;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Erreur lors de la suppression de la ligne de frais : {ex.Message}",
+                "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return false;
+        }
+    }
+
+    // Méthode pour modifier une ligne de frais forfait
+    public bool UpdateLigneFraisForfait(int idLigneFraisForfait, int idTypeFrais, int quantite)
+    {
+        try
+        {
+            using (var connection = DatabaseConnection.GetConnection())
+            {
+                connection.Open();
+                string query = "UPDATE ligne_frais_forfait SET id_type_frais = @idTypeFrais, quantite = @quantite WHERE id_ligne_frais_forfait = @idLigneFraisForfait";
+                using (var cmd = new MySqlCommand(query, connection))
+                {
+                    cmd.Parameters.AddWithValue("@idLigneFraisForfait", idLigneFraisForfait);
+                    cmd.Parameters.AddWithValue("@idTypeFrais", idTypeFrais);
+                    cmd.Parameters.AddWithValue("@quantite", quantite);
+                    return cmd.ExecuteNonQuery() > 0;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Erreur lors de la modification de la ligne de frais : {ex.Message}",
+                "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return false;
+        }
+    }
+
+    // Méthode pour supprimer une ligne de frais hors forfait
+    public bool DeleteLigneFraisHF(int idLigneFraisHF)
+    {
+        try
+        {
+            using (var connection = DatabaseConnection.GetConnection())
+            {
+                connection.Open();
+                string query = "DELETE FROM ligne_frais_hf WHERE id_ligne_frais_hf = @idLigneFraisHF";
+                using (var cmd = new MySqlCommand(query, connection))
+                {
+                    cmd.Parameters.AddWithValue("@idLigneFraisHF", idLigneFraisHF);
+                    return cmd.ExecuteNonQuery() > 0;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Erreur lors de la suppression de la ligne de frais hors forfait : {ex.Message}",
+                "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return false;
+        }
+    }
+
+    // Méthode pour modifier une ligne de frais hors forfait
+    public bool UpdateLigneFraisHF(int idLigneFraisHF, string libelle, DateTime dateDepense, decimal montant)
+    {
+        try
+        {
+            using (var connection = DatabaseConnection.GetConnection())
+            {
+                connection.Open();
+                string query = "UPDATE ligne_frais_hf SET libelle = @libelle, date_depense = @dateDepense, montant = @montant WHERE id_ligne_frais_hf = @idLigneFraisHF";
+                using (var cmd = new MySqlCommand(query, connection))
+                {
+                    cmd.Parameters.AddWithValue("@idLigneFraisHF", idLigneFraisHF);
+                    cmd.Parameters.AddWithValue("@libelle", libelle);
+                    cmd.Parameters.AddWithValue("@dateDepense", dateDepense);
+                    cmd.Parameters.AddWithValue("@montant", montant);
+                    return cmd.ExecuteNonQuery() > 0;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Erreur lors de la modification de la ligne de frais hors forfait : {ex.Message}",
+                "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return false;
+        }
+    }
+
+    // Méthode pour modifier le statut d'une ligne de frais hors forfait
+    public bool UpdateStatusLigneFraisHF(int idLigneFraisHF, StatusFraishf status, string? motifRefus = null)
+    {
+        try
+        {
+            using (var connection = DatabaseConnection.GetConnection())
+            {
+                connection.Open();
+                string query = "UPDATE ligne_frais_hf SET etat = @etat, motif_refus = @motifRefus WHERE id_ligne_frais_hf = @idLigneFraisHF";
+                using (var cmd = new MySqlCommand(query, connection))
+                {
+                    cmd.Parameters.AddWithValue("@idLigneFraisHF", idLigneFraisHF);
+                    cmd.Parameters.AddWithValue("@etat", status.ToString());
+                    cmd.Parameters.AddWithValue("@motifRefus", motifRefus ?? (object)DBNull.Value);
+                    return cmd.ExecuteNonQuery() > 0;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Erreur lors de la mise à jour du statut : {ex.Message}",
                 "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return false;
         }
