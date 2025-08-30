@@ -1,5 +1,4 @@
-﻿using System.Windows.Forms;
-using GSB_demo.Models;
+﻿using GSB_demo.Models;
 using GSB_GestionnairePatients.Manager;
 
 namespace GSB_demo.Views
@@ -27,7 +26,6 @@ namespace GSB_demo.Views
 
             lblConnectedUser.Text = $"Connecté: {connectedUser.NomComplet} ({connectedUser.Role})";
 
-            // Configuration du DataGridView
             dgvFicheFrais.AutoGenerateColumns = false;
             dgvFicheFrais.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvFicheFrais.MultiSelect = false;
@@ -35,37 +33,18 @@ namespace GSB_demo.Views
             dgvFicheFrais.AllowUserToDeleteRows = false;
             dgvFicheFrais.ReadOnly = false;
 
-            // Colonnes du DataGridView
-            //dgvFicheFrais.Columns.Add(new DataGridViewTextBoxColumn
-            //{
-            //    Name = "IdFicheFrais",
-            //    HeaderText = "ID",
-            //    DataPropertyName = "IdFicheFrais",
-            //    Width = 50
-            //});
-
-            //dgvFicheFrais.Columns.Add(new DataGridViewTextBoxColumn
-            //{
-            //    Name = "IdUser",
-            //    HeaderText = "ID Utilisateur",
-            //    DataPropertyName = "IdUser",
-            //    Width = 100
-            //});
-
             var btnVoirFicheFrais = new DataGridViewButtonColumn
             {
                 Name = "VoirFiche",
                 HeaderText = "Voir la fiche de frais",
                 Text = "Voir",
-                UseColumnTextForButtonValue = true, // Affiche "Voir" dans toutes les cellules
+                UseColumnTextForButtonValue = true,
                 Width = 100
             };
             dgvFicheFrais.Columns.Insert(0, btnVoirFicheFrais);
 
-            // Afficher le nom de l'utilisateur dans la DAtaGridView
             var NomUtilisateurColumn = new DataGridViewTextBoxColumn
             {
-                // ne s'affiche pas car il n'y a pas de propriété nom dans la classe FicheFrais
                 Name = "NomUtilisateur",
                 HeaderText = "Nom Utilisateur",
                 DataPropertyName = "NomUtilisateur",
@@ -101,7 +80,6 @@ namespace GSB_demo.Views
             };
             dgvFicheFrais.Columns.Insert(4, checkBoxDeleteFicheFrais);
 
-            // Gestion des permissions selon le rôle
             ConfigurePermissions();
         }
 
@@ -219,10 +197,8 @@ namespace GSB_demo.Views
         {
             try
             {
-                // Récupérer l'utilisateur connecté depuis le MainForm
                 User connectedUser = this.connectedUser;
 
-                // Créer l'objet FicheFrais
                 var nouvelleFiche = new FicheFrais
                 {
                     IdUser = connectedUser.IdUser,
@@ -239,7 +215,6 @@ namespace GSB_demo.Views
 
                 if (controller.AddFicheFrais(nouvelleFiche))
                 {
-                    // Passer l'ID de la fiche de frais nouvellement créée au formulaire
                     var NewFicheFraisForm = new NewLigneFraisForfaitForm(nouvelleFiche.IdFicheFrais);
                     LoadFicheFrais();
                     txtSearch.Clear();
@@ -273,23 +248,18 @@ namespace GSB_demo.Views
         private void btnDelete_Click(object sender, EventArgs e)
         {
 
-            // Liste pour stocker les fiches à supprimer
             List<FicheFrais> fichesASupprimer = new List<FicheFrais>();
 
-            // Parcourir toutes les lignes de la DataGridView
             for (int i = 0; i < dgvFicheFrais.Rows.Count; i++)
             {
-                // Vérifier si la case à cocher est cochée (colonne "Selectionner")
                 if (dgvFicheFrais.Rows[i].Cells["Selectionner"].Value != null &&
                     (bool)dgvFicheFrais.Rows[i].Cells["Selectionner"].Value == true)
                 {
-                    // Ajouter la fiche de frais à la liste des fiches à supprimer
                     var fiche = (FicheFrais)dgvFicheFrais.Rows[i].DataBoundItem;
                     fichesASupprimer.Add(fiche);
                 }
             }
 
-            // Vérifier s'il y a des fiches à supprimer
             if (fichesASupprimer.Count == 0)
             {
                 MessageBox.Show("Veuillez cocher au moins une fiche à supprimer.",
@@ -302,21 +272,17 @@ namespace GSB_demo.Views
             {
                 int nbSupprimees = 0;
 
-                // Parcourir la liste des fiches à supprimer
                 foreach (var fiche in fichesASupprimer)
                 {
-                    // Appeler la méthode de suppression du contrôleur
                     if (FicheFraisController.DeleteFicheFrais(fiche.IdFicheFrais))
                     {
                         nbSupprimees++;
                     }
                 }
 
-                // Afficher un message de confirmation
                 MessageBox.Show($"{nbSupprimees} fiche(s) de frais supprimée(s) avec succès.",
                     "Suppression", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                // Recharger la liste des fiches
                 LoadFicheFrais();
             }
         }
@@ -350,17 +316,24 @@ namespace GSB_demo.Views
 
         private void dgvFicheFrais_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            // Vérifie si la colonne cliquée est "VoirFiche"
             if (dgvFicheFrais.Columns[e.ColumnIndex].Name == "VoirFiche")
             {
-                // Récupère la fiche de frais de la ligne cliquée
                 var fiche = (FicheFrais)dgvFicheFrais.Rows[e.RowIndex].DataBoundItem;
 
-                // Ouvre le formulaire ou effectue l'action souhaitée
                 var fraisForfaitForm = new FraisForm(fiche);
-                fraisForfaitForm.Owner = this; // dès quon met un bouton pour ouvrir un nouveau form, mettre l'owner, pour ne pas avoir l'erreur : "Object reference not set to an instance of an object"
+                fraisForfaitForm.Owner = this;
+                
+                fraisForfaitForm.SetConnectedUser(this.connectedUser);
+                
                 fraisForfaitForm.ShowDialog();
             }
+        }
+
+        private void btn_AddUser_Click(object sender, EventArgs e)
+        {
+            var addUserForm = new AddUserForm();
+
+            addUserForm.ShowDialog();
         }
     }
 }

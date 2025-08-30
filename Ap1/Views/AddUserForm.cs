@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using GSB_demo.Manager;
+using GSB_demo.Models;
 
 namespace GSB_demo.Views
 {
@@ -15,6 +8,85 @@ namespace GSB_demo.Views
         public AddUserForm()
         {
             InitializeComponent();
+            InitializeRoleComboBox();
+            
+            // Associer l'événement au bouton
+            btn_CreateUser.Click += btn_CreateUser_Click;
+        }
+
+        private void InitializeRoleComboBox()
+        {
+            // Remplir la ComboBox avec les rôles disponibles
+            comboBox_SelectUserRole.DataSource = Enum.GetValues(typeof(User.RoleUser));
+            comboBox_SelectUserRole.DropDownStyle = ComboBoxStyle.DropDownList;
+        }
+
+        private void btn_CreateUser_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // Récupérer les valeurs des champs du formulaire
+                string nom = txtBox_UserName.Text.Trim();
+                string prenom = txtBox_FirstName.Text.Trim();
+                string email = txtBox_Email.Text.Trim();
+                string login = txt_BoxIdConnect.Text.Trim();
+                string motDePasse = txtBox_MdpUser.Text.Trim();
+                
+                // Vérifier que comboBox_SelectUserRole.SelectedItem est valide
+                if (comboBox_SelectUserRole.SelectedItem == null)
+                {
+                    MessageBox.Show("Veuillez sélectionner un rôle pour l'utilisateur.", 
+                        "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                // Récupérer le rôle sélectionné
+                User.RoleUser role = (User.RoleUser)comboBox_SelectUserRole.SelectedItem;
+
+                // Vérification des champs obligatoires
+                if (string.IsNullOrEmpty(nom) || string.IsNullOrEmpty(prenom) ||
+                    string.IsNullOrEmpty(email) || string.IsNullOrEmpty(login) || 
+                    string.IsNullOrEmpty(motDePasse))
+                {
+                    MessageBox.Show("Veuillez remplir tous les champs.", 
+                        "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                // Créer l'objet utilisateur
+                var nouvelUtilisateur = new User
+                {
+                    Nom = nom,
+                    Prenom = prenom,
+                    Email = email,
+                    Login = login,
+                    Mdp = motDePasse,
+                    Role = role,
+                    Actif = true,
+                    UserCreationDate = DateTime.Now
+                };
+
+                // Créer et appeler le manager pour ajouter l'utilisateur
+                var userManager = new AddUserManager();
+                bool success = userManager.AddUser(nouvelUtilisateur);
+
+                if (success)
+                {
+                    MessageBox.Show("Utilisateur ajouté avec succès.", 
+                        "Succès", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    this.Close();
+                }
+                else
+                {
+                    MessageBox.Show("Erreur lors de l'ajout de l'utilisateur.", 
+                        "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Une erreur est survenue : {ex.Message}", 
+                    "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void label3_Click(object sender, EventArgs e)

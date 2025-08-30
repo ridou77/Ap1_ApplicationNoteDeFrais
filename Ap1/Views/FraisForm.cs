@@ -8,6 +8,8 @@ namespace GSB_demo.Views
         private FicheFrais ficheFrais;
         private LigneFraisManager ligneFraisManager = new LigneFraisManager();
         private TypeFraisManager typeFraisManager = new TypeFraisManager();
+        public User connectedUser { get; private set; }
+
 
         private void LoadLignesFraisForfait()
         {
@@ -25,6 +27,48 @@ namespace GSB_demo.Views
 
             // Calculer le prix total
             CalcAndPrintPrixTotalHF();
+        }
+
+        private void ConfigurePermissions()
+        {
+            if (connectedUser == null)
+            {
+                // Si l'utilisateur n'est pas initialisé, on masque tous les boutons
+                btn_deleteFF.Visible = false;
+                btn_UpdateFF.Visible = false;
+                btn_DeleteHF.Visible = false;
+                btn_UpdateHF.Visible = false;
+                return;
+            }
+            
+            // Configurer les permissions selon le rôle
+            switch (connectedUser.Role)
+            {
+                case User.RoleUser.ADMIN: // Administrateur
+                    btn_deleteFF.Visible = true;
+                    btn_UpdateFF.Visible = true;
+                    btn_DeleteHF.Visible = true;
+                    btn_UpdateHF.Visible = true;
+                    break;
+                case User.RoleUser.COMPTABLE: // Comptable
+                    btn_deleteFF.Visible = true;
+                    btn_UpdateFF.Visible = true;
+                    btn_DeleteHF.Visible = true;
+                    btn_UpdateHF.Visible = true;
+                    break;
+                case User.RoleUser.VISITEUR: // Visiteur
+                    btn_deleteFF.Visible = true;
+                    btn_UpdateFF.Visible = false;
+                    btn_DeleteHF.Visible = true;
+                    btn_UpdateHF.Visible = false;
+                    break;
+                default:
+                    btn_deleteFF.Visible = false;
+                    btn_UpdateFF.Visible = false;
+                    btn_DeleteHF.Visible = false;
+                    btn_UpdateHF.Visible = false;
+                    break;
+            }
         }
 
         private void CalcAndPrintPrixTotalFF()
@@ -106,6 +150,21 @@ namespace GSB_demo.Views
                 DataPropertyName = "Quantite",
                 Width = 80
             });
+            LigneFraisForfaitDG.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = "StatusFraisHF",
+                HeaderText = "Statut",
+                DataPropertyName = "StatusFraisHF",
+                Width = 80
+            });
+            var checkBoxLigneFF = new DataGridViewCheckBoxColumn
+            {
+                Name = "Selectionner",
+                HeaderText = "Sélectionner",
+                ReadOnly = false,
+                Width = 103
+            };
+            LigneFraisForfaitDG.Columns.Add(checkBoxLigneFF);
         }
         private void InitializeInterfaceHF()
         {
@@ -146,32 +205,47 @@ namespace GSB_demo.Views
                 HeaderText = "Motif Refus",
                 Text = "Voir le motif du refus",
                 UseColumnTextForButtonValue = true,
-                Width = 100
+                Width = 150
             };
-            ligneFraisHFDG.Columns.Insert(5, btnVoirMotifRefus);
+            ligneFraisHFDG.Columns.Insert(4, btnVoirMotifRefus);
+            var checkBoxLigneHF = new DataGridViewCheckBoxColumn
+            {
+                Name = "Selectionner",
+                HeaderText = "Sélectionner",
+                ReadOnly = false,
+                Width = 103
+            };
+            ligneFraisHFDG.Columns.Insert(5, checkBoxLigneHF);
         }
 
         public FraisForm(FicheFrais fiche)
         {
             InitializeComponent();
+            ficheFrais = fiche;
+            
+            // Nous initialisons l'interface avant de configurer les permissions
             InitializeInterface();
             InitializeInterfaceHF();
-            ficheFrais = fiche;
+            
             label1.Text = $"Fiche de frais du : {ficheFrais.DateCreationFicheFrais:dd/MM/yyyy}";
             LoadLignesFraisForfait();
             LoadLignesFraisHF();
+        }
+
+        // Ajoutez cette méthode pour initialiser l'utilisateur et configurer les permissions
+        public void SetConnectedUser(User user)
+        {
+            connectedUser = user;
+            ConfigurePermissions();
         }
 
         private void btnAddFraisForfait_Click(object sender, EventArgs e)
         {
             try
             {
-                // Récupérer l'utilisateur connecté depuis le MainForm
-                User connectedUser = ((MainForm)this.Owner).connectedUser;
-
                 var NewLigneFraisForfaitForm = new NewLigneFraisForfaitForm(ficheFrais.IdFicheFrais);
                 NewLigneFraisForfaitForm.ShowDialog();
-                LoadLignesFraisForfait(); // Recharge la DataGridView après fermeture
+                LoadLignesFraisForfait();
             }
             catch (Exception ex)
             {
@@ -184,12 +258,9 @@ namespace GSB_demo.Views
         {
             try
             {
-                // Récupérer l'utilisateur connecté depuis le MainForm
-                User connectedUser = ((MainForm)this.Owner).connectedUser;
-
                 var NewLigneFraisHFForm = new NewLigneFraisHFForm(ficheFrais.IdFicheFrais);
                 NewLigneFraisHFForm.ShowDialog();
-                LoadLignesFraisHF(); // Recharge la DataGridView après fermeture
+                LoadLignesFraisHF();
             }
             catch (Exception ex)
             {

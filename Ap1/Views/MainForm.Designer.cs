@@ -157,6 +157,7 @@
             btn_AddUser.TabIndex = 10;
             btn_AddUser.Text = "Ajouter un utilisateur";
             btn_AddUser.UseVisualStyleBackColor = true;
+            btn_AddUser.Click += btn_AddUser_Click;
             // 
             // btn_AddTypeFrais
             // 
