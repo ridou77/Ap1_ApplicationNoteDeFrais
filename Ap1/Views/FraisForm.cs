@@ -10,6 +10,9 @@ namespace GSB_demo.Views
         private TypeFraisManager typeFraisManager = new TypeFraisManager();
         public User connectedUser { get; private set; }
 
+        // Ajouter cette propriété à la classe, après les autres propriétés
+        private bool estCloturee = false;
+
 
         private void LoadLignesFraisForfait()
         {
@@ -27,6 +30,15 @@ namespace GSB_demo.Views
             CalcAndPrintPrixTotalHF();
         }
 
+        // Ajouter cette méthode qui sera appelée depuis MainForm
+        public void SetFicheEstCloturee(bool estCloturee)
+        {
+            this.estCloturee = estCloturee;
+
+            // Mettre à jour la visibilité des boutons
+            MiseAJourVisibiliteBoutons();
+        }
+
         private void ConfigurePermissions()
         {
             if (connectedUser == null)
@@ -36,6 +48,8 @@ namespace GSB_demo.Views
                 btn_UpdateFF.Visible = false;
                 btn_DeleteHF.Visible = false;
                 btn_UpdateHF.Visible = false;
+                btnAddFraisForfait.Visible = false;
+                btn_AddFraisHF.Visible = false;
                 return;
             }
 
@@ -43,30 +57,62 @@ namespace GSB_demo.Views
             switch (connectedUser.Role)
             {
                 case User.RoleUser.ADMIN: // Administrateur
-                    btn_deleteFF.Visible = true;
+                    btn_deleteFF.Visible = !estCloturee;
                     btn_UpdateFF.Visible = true;
-                    btn_DeleteHF.Visible = true;
+                    btn_DeleteHF.Visible = !estCloturee;
                     btn_UpdateHF.Visible = true;
+                    btnAddFraisForfait.Visible = !estCloturee;
+                    btn_AddFraisHF.Visible = !estCloturee;
                     break;
                 case User.RoleUser.COMPTABLE: // Comptable
-                    btn_deleteFF.Visible = true;
+                    btn_deleteFF.Visible = !estCloturee;
                     btn_UpdateFF.Visible = true;
-                    btn_DeleteHF.Visible = true;
+                    btn_DeleteHF.Visible = !estCloturee;
                     btn_UpdateHF.Visible = true;
+                    btnAddFraisForfait.Visible = !estCloturee;
+                    btn_AddFraisHF.Visible = !estCloturee;
                     break;
                 case User.RoleUser.VISITEUR: // Visiteur
-                    btn_deleteFF.Visible = true;
+                    btn_deleteFF.Visible = !estCloturee;
                     btn_UpdateFF.Visible = false;
-                    btn_DeleteHF.Visible = true;
+                    btn_DeleteHF.Visible = !estCloturee;
                     btn_UpdateHF.Visible = false;
+                    btnAddFraisForfait.Visible = !estCloturee;
+                    btn_AddFraisHF.Visible = !estCloturee;
                     break;
                 default:
                     btn_deleteFF.Visible = false;
                     btn_UpdateFF.Visible = false;
                     btn_DeleteHF.Visible = false;
                     btn_UpdateHF.Visible = false;
+                    btnAddFraisForfait.Visible = false;
+                    btn_AddFraisHF.Visible = false;
                     break;
             }
+        }
+
+        private void VerifierSiFicheEstCloturee()
+        {
+            if (ficheFrais == null) return;
+
+            bool etatCloture = ficheFrais.Etat != FicheFrais.EtatFicheFrais.EN_COURS;
+
+            bool dateClotureDefined = ficheFrais.DateClotureFicheFrais != DateTime.MinValue;
+
+            DateTime moisSuivantCreation = ficheFrais.DateCreationFicheFrais.AddMonths(1);
+            bool apresDelai = DateTime.Now.Year > moisSuivantCreation.Year ||
+                              (DateTime.Now.Year == moisSuivantCreation.Year &&
+                               DateTime.Now.Month >= moisSuivantCreation.Month &&
+                               DateTime.Now.Day >= 10);
+
+            estCloturee = etatCloture || dateClotureDefined || apresDelai;
+
+            MiseAJourVisibiliteBoutons();
+        }
+
+        private void MiseAJourVisibiliteBoutons()
+        {
+            ConfigurePermissions();
         }
 
         private void CalcAndPrintPrixTotalFF()
@@ -111,7 +157,7 @@ namespace GSB_demo.Views
 
                 foreach (var ligne in lignes)
                 {
-                   prixTotal += ligne.MontantFraisHF;
+                    prixTotal += ligne.MontantFraisHF;
                 }
 
                 TotalPriceFraisHorsForfait.Text = $"Prix total : {prixTotal:C2}";
@@ -219,6 +265,9 @@ namespace GSB_demo.Views
             InitializeInterfaceHF();
 
             label1.Text = $"Fiche de frais du : {ficheFrais.DateCreationFicheFrais:dd/MM/yyyy}";
+
+            VerifierSiFicheEstCloturee();
+
             LoadLignesFraisForfait();
             LoadLignesFraisHF();
         }
