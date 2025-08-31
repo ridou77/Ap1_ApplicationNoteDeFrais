@@ -1,16 +1,28 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
+using System.Security.Cryptography;
+using System.Text;
+using System.Windows.Forms;
 using GSB_demo.Models;
 using GSB_demo.Utils;
 using Microsoft.VisualBasic.Logging;
 using MySql.Data.MySqlClient;
 
-namespace GSB_demo.Manager;
+namespace GSB_demo.Manager
+{
     public class AuthManager
     {
-        public User AuthenticateUser(string login, string Mdp)
+        public string HashPassword(string password)
+        {
+            return Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(password)));
+        }
+
+        public User AuthenticateUser(string login, string password)
         {
             try
             {
+                string hashedPassword = HashPassword(password);
+
                 using (var connection = DatabaseConnection.GetConnection())
                 {
                     connection.Open();
@@ -21,7 +33,7 @@ namespace GSB_demo.Manager;
                     using (var cmd = new MySqlCommand(query, connection))
                     {
                         cmd.Parameters.AddWithValue("@login", login);
-                        cmd.Parameters.AddWithValue("@Mdp", Mdp);
+                        cmd.Parameters.AddWithValue("@Mdp", hashedPassword);
 
                         using (var reader = cmd.ExecuteReader())
                         {
@@ -52,3 +64,4 @@ namespace GSB_demo.Manager;
             return null;
         }
     }
+}
