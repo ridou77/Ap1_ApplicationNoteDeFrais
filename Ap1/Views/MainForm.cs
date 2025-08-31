@@ -76,7 +76,7 @@ namespace GSB_demo.Views
                 Name = "Selectionner",
                 HeaderText = "Sélectionner",
                 ReadOnly = false,
-                Width = 40
+                Width = 105
             };
             dgvFicheFrais.Columns.Insert(4, checkBoxDeleteFicheFrais);
 
@@ -150,10 +150,12 @@ namespace GSB_demo.Views
         {
             try
             {
+                FicheFraisController.UpdateAllFicheFraisStatus();
+                
                 allFicheFrais = FicheFraisController.GetAllFicheFrais();
                 dgvFicheFrais.DataSource = allFicheFrais;
 
-                this.Text = $"GSB - Gestionnaire de Patients ({allFicheFrais.Count} patients)";
+                this.Text = $"GSB - Gestionnaire de Fiches de Frais ({allFicheFrais.Count} fiches)";
             }
             catch (Exception ex)
             {
