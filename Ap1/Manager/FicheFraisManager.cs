@@ -3,7 +3,7 @@ using GSB_demo.Utils;
 using GSB_demo.Models;
 using MySql.Data.MySqlClient;
 
-namespace GSB_GestionnairePatients.Manager;
+namespace GSB_demo.Manager;
     public class FicheFraisManager
     {
         public List<FicheFrais> GetAllFicheFrais()
@@ -180,4 +180,143 @@ namespace GSB_GestionnairePatients.Manager;
                 return false;
             }
         }
+
+        // Méthode pour vérifier et mettre à jour les statuts des fiches de frais
+public void UpdateAllFicheFraisStatus()
+{
+    try
+    {
+        var allFicheFrais = GetAllFicheFrais();
+        DateTime today = DateTime.Now;
+        
+        foreach (var fiche in allFicheFrais)
+        {
+            DateTime moisFiche = fiche.DateCreationFicheFrais;
+            DateTime moisSuivant = moisFiche.AddMonths(1);
+            
+            // Une fiche doit être clôturée si nous sommes dans le mois suivant sa création
+            // et si au moins le 10 du mois
+            bool shouldClose = (today.Year > moisSuivant.Year || 
+                              (today.Year == moisSuivant.Year && today.Month >= moisSuivant.Month)) && 
+                              today.Day >= 10 && 
+                              fiche.Etat == FicheFrais.EtatFicheFrais.EN_COURS;
+                
+            
+            if (shouldClose)
+            {
+                var ligneFraisManager = new LigneFraisManager();
+                var lignesFraisForfait = ligneFraisManager.GetAllLignesFraisForfait(fiche.IdFicheFrais);
+                var lignesHorsForfait = ligneFraisManager.GetAllLignesFraisHF(fiche.IdFicheFrais);
+                
+                bool allValidated = true;
+                bool allRejected = true;
+                bool hasRejected = false;
+                
+                foreach (var ligne in lignesFraisForfait)
+                {
+                    if (ligne.StatusFraisFF == LigneFraisForfait.StatusFraisff.EN_ATTENTE)
+                    {
+                        allValidated = false;
+                        allRejected = false;
+                    }
+                    else if (ligne.StatusFraisFF == LigneFraisForfait.StatusFraisff.REFUSE)
+                    {
+                        allValidated = false;
+                        hasRejected = true;
+                    }
+                    else if (ligne.StatusFraisFF == LigneFraisForfait.StatusFraisff.ACCEPTE)
+                    {
+                        allRejected = false;
+                    }
+                }
+                
+                foreach (var ligne in lignesHorsForfait)
+                {
+                    if (ligne.StatusFraisHF == LigneFraisHF.StatusFraishf.EN_ATTENTE)
+                    {
+                        allValidated = false;
+                        allRejected = false;
+                    }
+                    else if (ligne.StatusFraisHF == LigneFraisHF.StatusFraishf.REFUSE)
+                    {
+                        allValidated = false;
+                        hasRejected = true;
+                    }
+                    else if (ligne.StatusFraisHF == LigneFraisHF.StatusFraishf.ACCEPTE)
+                    {
+                        allRejected = false;
+                    }
+                }
+                
+                FicheFrais.EtatFicheFrais nouveauStatut;
+                
+                if (allValidated)
+                {
+                    nouveauStatut = FicheFrais.EtatFicheFrais.VALIDEE;
+                }
+                else if (allRejected)
+                {
+                    nouveauStatut = FicheFrais.EtatFicheFrais.REFUSEE;
+                }
+                else if (hasRejected)
+                {
+                    nouveauStatut = FicheFrais.EtatFicheFrais.REFUS_PARTIEL;
+                }
+                else
+                {
+                    nouveauStatut = FicheFrais.EtatFicheFrais.EN_ATTENTE;
+                }
+                
+                UpdateFicheFraisStatus(
+                    fiche.IdFicheFrais, 
+                    nouveauStatut,
+                    nouveauStatut == FicheFrais.EtatFicheFrais.VALIDEE ? today : null,
+                    today);
+            }
+        }
+    }
+    catch (Exception ex)
+    {
+        MessageBox.Show($"Erreur lors de la mise à jour des statuts des fiches de frais : {ex.Message}",
+            "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+    }
+}
+
+// methode pour mettre à jour le statut d'une fiche de frais
+public bool UpdateFicheFraisStatus(int idFicheFrais, FicheFrais.EtatFicheFrais etat, 
+    DateTime? dateValidation = null, DateTime? dateCloture = null, string? motifRefus = null)
+{
+    try
+    {
+        using (var connection = DatabaseConnection.GetConnection())
+        {
+            connection.Open();
+            string query = @"UPDATE fiche_frais 
+                           SET etat_fiche_frais = @etat, 
+                               date_validation_fiche_frais = @dateValidation,
+                               date_modification_fiche_frais = @dateModification,
+                               date_cloture_fiche_frais = @dateCloture,
+                               motif_refus_fiche_frais = @motifRefus
+                           WHERE id_fiche_frais = @idFicheFrais";
+
+            using (var cmd = new MySqlCommand(query, connection))
+            {
+                cmd.Parameters.AddWithValue("@idFicheFrais", idFicheFrais);
+                cmd.Parameters.AddWithValue("@etat", etat.ToString());
+                cmd.Parameters.AddWithValue("@dateValidation", dateValidation ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@dateModification", DateTime.Now);
+                cmd.Parameters.AddWithValue("@dateCloture", dateCloture ?? (object)DBNull.Value);
+                cmd.Parameters.AddWithValue("@motifRefus", motifRefus ?? (object)DBNull.Value);
+
+                return cmd.ExecuteNonQuery() > 0;
+            }
+        }
+    }
+    catch (Exception ex)
+    {
+        MessageBox.Show($"Erreur lors de la mise à jour du statut de la fiche de frais : {ex.Message}",
+            "Erreur", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        return false;
+    }
+}
     }

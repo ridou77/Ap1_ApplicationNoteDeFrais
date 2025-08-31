@@ -1,5 +1,5 @@
 ﻿using GSB_demo.Models;
-using GSB_GestionnairePatients.Manager;
+using GSB_demo.Manager;
 
 namespace GSB_demo.Views
 {
